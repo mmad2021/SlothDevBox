@@ -1,9 +1,39 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+bun.lockb
+
+# Environment
 .env
 .env.local
-*.log
+
+# Database
 data/*.db
-data/*.db-*
+data/*.db-shm
+data/*.db-wal
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Logs
+*.log
+logs/
+
+# OS
 .DS_Store
-.turbo
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temp files
+*.tmp
+.cache/
+
+# ngrok
+ngrok.yml

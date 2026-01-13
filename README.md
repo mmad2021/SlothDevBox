@@ -1,334 +1,343 @@
-# SlothDevBox
+# 🦥 SlothDevBox
 
-A self-hosted command center for running dev tasks on a Mac mini from iPad/mobile with **GitHub Copilot integration**.
+> A self-hosted command center for running dev tasks on your Mac from anywhere - iPad, iPhone, or any device with a browser.
 
-## Features
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- 📱 **Mobile-friendly web UI** - Control from iPad/iPhone
-- 🤖 **GitHub Copilot CLI Integration** - Ask AI to fix bugs, implement features, review code
-- 🔄 **Live streaming logs via WebSocket** - Watch tasks execute in real-time
-- 🚀 **Preview URLs for Vite apps** - Get instant preview links
-- 🔒 **Bearer token authentication** - Secure remote access
-- 📊 **Task history with artifacts** - Track all executions and outputs
-- 🎯 **Predefined safe recipes** - No arbitrary shell commands
+**Control your development workflow from your couch.** SlothDevBox turns your Mac into a remote dev automation server with a mobile-friendly web interface. Create tasks, watch live logs, and manage your projects - all from your iPad.
 
-## Stack
+## ✨ Features
 
-- **Runtime**: Bun
-- **Backend**: Express + TypeScript
-- **Frontend**: Vite + React + TypeScript + shadcn/ui
-- **Database**: SQLite (bun:sqlite)
-- **Realtime**: WebSocket (ws)
+- 📱 **Mobile-First UI** - Beautiful, responsive interface built with shadcn/ui
+- 🎨 **Dark Mode** - Easy on the eyes, day or night
+- 🔄 **Live Streaming Logs** - Watch task execution in real-time via WebSocket
+- 🎯 **Recipe System** - Create custom automation workflows with a visual builder
+- 🤖 **GitHub Copilot Integration** - AI-powered code assistance (optional)
+- 🚀 **Preview URLs** - Instant dev server access from mobile
+- 📊 **Task History** - Track all executions with artifacts and logs
+- 🔒 **Secure** - Token-based auth, no arbitrary command execution
+- 🌐 **Remote Access** - ngrok, Tailscale, or Cloudflare Tunnel support
 
-## Quick Start
+## 📸 Screenshots
 
-### 1. Install Dependencies
+<details>
+<summary>Dashboard</summary>
+
+- View all tasks with status badges
+- Dark/light mode toggle
+- Quick access to projects, recipes, and new tasks
+
+</details>
+
+<details>
+<summary>Recipe Manager</summary>
+
+- Visual recipe builder with step-by-step configuration
+- Create, view, and delete automation recipes
+- Support for multiple step types (commands, git, copilot)
+
+</details>
+
+<details>
+<summary>Task Detail</summary>
+
+- Live streaming logs
+- Task status and metadata
+- Artifacts (preview URLs, diffs, notes)
+
+</details>
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Bun** (v1.0.0+) - [Install Bun](https://bun.sh)
+- **Mac** - Primary dev machine (where tasks run)
+- **GitHub Copilot CLI** (optional) - For AI features
+
+### Installation
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/yourusername/SlothDevBox.git
+cd SlothDevBox
+```
+
+2. **Install dependencies**
 
 ```bash
 bun install
 ```
 
-### 2. Configure Environment
+3. **Configure environment**
 
 ```bash
 cp .env.example .env
-# Edit .env and set CONTROL_PLANE_TOKEN to a secure value
 ```
 
-### 3. Setup Database
+Edit `.env` and set your secure token:
+
+```env
+CONTROL_PLANE_TOKEN=your-secure-token-here
+PORT=8787
+DB_PATH=./data/devcenter.db
+```
+
+4. **Setup database**
 
 ```bash
 bun run db:setup
 ```
 
-### 4. Start Development
+5. **Start the services**
 
 ```bash
 bun run dev
 ```
 
 This starts:
-- API server on http://localhost:8787
-- UI dev server on http://localhost:5173
-- Worker process polling for tasks
+- 🔌 API server on `http://localhost:8787`
+- 🎨 UI dev server on `http://localhost:5173`
+- ⚙️ Worker process (polls for tasks)
 
-### 5. Open UI
+6. **Open the UI**
 
-Navigate to http://localhost:5173 in your browser.
+Navigate to `http://localhost:5173` and login with your token.
 
-## 🎯 Available Recipes
+## 📱 Remote Access Setup
 
-The system includes **7 predefined recipes** for common dev workflows:
+### Option 1: ngrok (Easiest)
 
-### 🤖 GitHub Copilot Recipes
+1. Create `~/ngrok.yml`:
 
-**Prerequisites**: Install GitHub Copilot CLI
-```bash
-npm install -g @github/copilot
+```yaml
+version: "2"
+authtoken: YOUR_NGROK_AUTHTOKEN
+
+tunnels:
+  ui:
+    proto: http
+    addr: 5173
+  api:
+    proto: http
+    addr: 8787
 ```
 
-#### 1. **Copilot: Explain Code**
-Ask Copilot to explain code concepts or patterns.
-- **Use case**: Understanding unfamiliar code
-- **Input**: Question or code snippet in "goal" field
-- **Example**: "Explain how React hooks work"
-
-#### 2. **Copilot: Fix Bug** 🐛
-Get AI assistance to debug and fix issues.
-- **Use case**: Troubleshooting bugs
-- **Input**: Describe the bug in "goal" field
-- **Example**: "TypeError: Cannot read property 'map' of undefined in UserList component"
-- **Output**: Copilot's suggested fixes stored as artifact
-
-#### 3. **Copilot: Implement Feature** ✨
-Get implementation guidance for new features.
-- **Use case**: Building new functionality
-- **Input**: Feature description in "goal" field
-- **Example**: "Add dark mode toggle to the navbar"
-- **Output**: Step-by-step implementation plan
-
-#### 4. **Copilot: Review Changes** 👀
-AI-powered code review of uncommitted changes.
-- **Use case**: Pre-commit code review
-- **Steps**: 
-  1. Runs `git diff` to capture changes
-  2. Asks Copilot to review and suggest improvements
-- **Output**: Review feedback as artifact
-
-### 🚀 Development Recipes
-
-#### 5. **Start Preview (Vite)**
-Launch dev server with live preview URL.
-- **Use case**: Quick preview from mobile
-- **Steps**:
-  1. Validates project path exists
-  2. Starts `bun run dev` on configured port
-  3. Detects "ready" signal
-- **Output**: 
-  - Preview URL artifact (e.g., `http://100.x.x.x:5174`)
-  - Process kept alive for access
-  - Live logs of server output
-
-#### 6. **Run Tests** 🧪
-Execute project test suite.
-- **Use case**: CI/CD validation
-- **Command**: `bun test`
-- **Output**: Test results in logs + command transcript
-
-#### 7. **Create Branch + Diff Summary** 🌿
-Create git branch and show changes.
-- **Use case**: Starting new feature work
-- **Input**: Branch slug (e.g., "fix-auth-bug")
-- **Steps**:
-  1. Creates branch: `task/{branchSlug}`
-  2. Shows `git diff --stat`
-- **Output**: Diff summary as artifact
-
-## 📱 Using Recipes from iPad/Mobile
-
-### Typical Workflow
-
-1. **Open UI** on your iPad: `http://your-mac-mini-ip:8787`
-2. **Click "New Task"**
-3. **Select Project** (e.g., "My Web App")
-4. **Select Recipe** based on what you need:
-   - Need help? → **Copilot: Explain Code**
-   - Found a bug? → **Copilot: Fix Bug**
-   - New feature? → **Copilot: Implement Feature**
-   - Want review? → **Copilot: Review Changes**
-   - Need preview? → **Start Preview (Vite)**
-   - Run tests? → **Run Tests**
-5. **Enter details** in the "Goal/Prompt" field
-6. **Click "Create Task"**
-7. **Watch live logs** stream in real-time! 🔥
-8. **View artifacts** (Copilot responses, preview URLs, diffs)
-
-### Example: Fix Bug with Copilot
-
-```
-Project: My Web App
-Recipe: Copilot: Fix Bug
-Goal: "Users can't submit form - button stays disabled even when form is valid"
-
-Result:
-✅ Copilot analyzes the issue
-✅ Suggests checking form validation state
-✅ Recommends checking useEffect dependencies
-✅ All stored as artifact for later reference
-```
-
-### Example: Get Preview URL
-
-```
-Project: My Web App  
-Recipe: Start Preview (Vite)
-(no goal needed)
-
-Result:
-✅ Vite server starts
-✅ Preview URL: http://100.64.5.123:5174
-✅ Click URL from iPad to see live app!
-```
-
-## 🎨 Customizing Recipes
-
-Recipes are defined in `apps/api/src/db/seed.ts`. Each recipe is a sequence of **safe, predefined steps**:
-
-### Step Types
-
-1. **check_path** - Validates project directory exists
-2. **command** - Runs allowed command (bun, npm, etc.)
-3. **git** - Git operations (checkout, diff, etc.)
-4. **copilot** - GitHub Copilot CLI queries
-5. **start_preview** - Launches dev server with keepAlive
-
-### Example: Custom Recipe
-
-```typescript
-{
-  id: 'lint-and-fix',
-  name: 'Lint & Auto-Fix',
-  description: 'Run ESLint with auto-fix',
-  steps: [
-    { type: 'check_path' },
-    { 
-      type: 'command',
-      command: 'npm',
-      args: ['run', 'lint', '--', '--fix']
-    },
-  ],
-}
-```
-
-After adding a recipe:
-```bash
-# Delete old recipes and reseed
-sqlite3 data/devcenter.db "DELETE FROM recipes;"
-bun run db:setup
-```
-
-## Production Deployment
+2. Start both tunnels:
 
 ```bash
-bun run build
-bun run start
+ngrok start --all --config ~/ngrok.yml
 ```
 
-The API serves the built frontend at http://localhost:8787
+3. Update `.env` with your API tunnel URL:
 
-## Remote Access
+```env
+VITE_API_BASE_URL=https://your-api-url.ngrok-free.app
+```
 
-### Via Tailscale (Recommended)
+4. Restart dev servers and access UI from iPad using the UI tunnel URL.
 
-1. Install Tailscale on your Mac mini
+### Option 2: Tailscale (Recommended for persistent access)
+
+1. Install [Tailscale](https://tailscale.com) on your Mac
 2. Get your Tailscale IP: `tailscale ip -4`
-3. Set in `.env`: `PUBLIC_HOST=100.x.x.x`
-4. Access from any device on your tailnet: `http://100.x.x.x:8787`
+3. Access from any device: `http://YOUR_TAILSCALE_IP:5173`
 
-### Via Cloudflare Tunnel (Alternative)
-
-```bash
-cloudflared tunnel --url http://localhost:8787
-```
-
-## API Authentication
-
-All API requests require a Bearer token:
+### Option 3: Cloudflare Tunnel
 
 ```bash
-curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8787/api/health
+cloudflared tunnel --url http://localhost:5173
 ```
 
-WebSocket connection:
-```javascript
-const ws = new WebSocket('ws://localhost:8787/ws?token=YOUR_TOKEN');
-```
+## 🎯 Usage
 
-## Adding Projects
+### 1. Add Your Projects
 
-Edit `apps/api/src/db/seed.ts`:
+Via UI:
+- Go to **Projects** page
+- Click **New Project**
+- Enter name, path, and default dev port
+
+Via seed file (`apps/api/src/db/seed.ts`):
 
 ```typescript
 export const seedProjects = [
   {
-    id: 'my-project',
-    name: 'My Project',
-    path: '/Users/you/projects/my-project',
-    defaultDevPort: 5174,
+    id: 'my-app',
+    name: 'My App',
+    path: '/Users/you/projects/my-app',
+    defaultDevPort: 5173,
   },
 ];
 ```
 
-Then:
+Then run: `bun run db:setup`
+
+### 2. Create Recipes
+
+Via UI:
+- Go to **Recipes** page
+- Click **New Recipe**
+- Configure steps with the visual builder
+
+Example recipe (Run Tests):
+
+```json
+{
+  "id": "run-tests",
+  "name": "Run Tests",
+  "description": "Execute test suite",
+  "steps": [
+    { "type": "check_path" },
+    { 
+      "type": "command",
+      "command": "bun",
+      "args": ["test"]
+    }
+  ]
+}
+```
+
+### 3. Run Tasks
+
+1. Click **New Task** from Dashboard
+2. Select a project and recipe
+3. Enter any required inputs (e.g., goal for Copilot recipes)
+4. Click **Create Task**
+5. Watch live logs stream in real-time! 🔥
+
+## 🎨 Recipe Step Types
+
+| Step Type | Description | Use Case |
+|-----------|-------------|----------|
+| `check_path` | Validates project directory exists | Safety check |
+| `command` | Run allowed commands (bun, npm, git) | Build, test, lint |
+| `start_preview` | Launch dev server with preview URL | Remote development |
+| `git` | Git operations (diff, branch, etc.) | Version control |
+| `copilot` | GitHub Copilot CLI integration | AI assistance |
+
+## 🏗️ Project Structure
+
+```
+SlothDevBox/
+├── apps/
+│   ├── api/          # Express backend (REST + WebSocket)
+│   ├── ui/           # Vite + React frontend
+│   └── worker/       # Task executor daemon
+├── packages/
+│   └── shared/       # Shared types & schemas
+├── data/
+│   └── devcenter.db  # SQLite database
+└── .env              # Environment config
+```
+
+## 🔒 Security
+
+- ✅ No arbitrary shell command execution
+- ✅ Predefined recipe steps only
+- ✅ Command allowlist: `git`, `bun`, `npm`, `node`, `gh`, `copilot`
+- ✅ Blocks dangerous patterns: `sudo`, `rm -rf`, etc.
+- ✅ Bearer token authentication on all routes
+- ✅ CORS enabled for remote access
+
+## 🛠️ Built-In Recipes
+
+SlothDevBox includes these recipes out of the box:
+
+1. **Start Preview (Vite)** - Launch dev server with public URL
+2. **Run Tests** - Execute your test suite
+3. **Copilot: Explain Code** - Ask AI about code concepts
+4. **Copilot: Fix Bug** - Get AI help debugging
+5. **Copilot: Implement Feature** - AI implementation guidance
+6. **Copilot: Review Changes** - AI code review
+7. **Create Branch + Diff** - Git workflow automation
+
+## 📦 Production Deployment
+
 ```bash
-bun run db:setup
+# Build all apps
+bun run build
+
+# Start production server
+NODE_ENV=production bun run start
 ```
 
-Or use the API:
-```bash
-curl -X POST http://localhost:8787/api/projects \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "My Project",
-    "path": "/path/to/project",
-    "defaultDevPort": 5174
-  }'
-```
-
-## Project Structure
-
-```
-apps/
-  api/        Express backend
-  ui/         Vite React frontend
-  worker/     Task executor
-packages/
-  shared/     Shared types & schemas
-data/
-  devcenter.db  SQLite database
-```
-
-## Security
-
-- Never executes arbitrary shell commands from users
-- Predefined recipe steps only
-- Bearer token authentication
-- Allowed commands: git, bun, gh, node, npm, copilot
-- Blocks dangerous patterns (sudo, rm -rf)
-
-## 💡 Pro Tips
-
-1. **Use Copilot recipes liberally** - They don't modify code, just provide guidance
-2. **Keep preview servers running** - Use "Start Preview" and access from anywhere
-3. **Review before implementing** - Use "Copilot: Explain Code" first, then "Implement Feature"
-4. **Chain tasks** - Review changes with Copilot, then create branch
-5. **Check artifacts** - All Copilot responses are saved for later reference
+The API server will serve the built frontend at `http://localhost:8787`.
 
 ## 🐛 Troubleshooting
 
-### Copilot not working
-```bash
-# Check if installed
-which copilot
+<details>
+<summary><b>Tasks not appearing</b></summary>
 
-# Install if missing
+- Check worker is running (should see "Polling for tasks..." in terminal)
+- Verify database path in `.env`
+- Check API server logs for errors
+
+</details>
+
+<details>
+<summary><b>Live logs not streaming</b></summary>
+
+- Verify WebSocket connection (check browser console)
+- If using ngrok, ensure API tunnel URL is set correctly
+- Check firewall settings
+
+</details>
+
+<details>
+<summary><b>Copilot recipes failing</b></summary>
+
+```bash
+# Install GitHub Copilot CLI
 npm install -g @github/copilot
 
 # Verify it works
-copilot "how do I create a React component"
+copilot "explain how promises work"
 ```
 
-### Preview URL not accessible
-- Check `PUBLIC_HOST` in `.env` is set to your Mac mini's IP
-- Verify firewall allows port 8787
-- Use Tailscale for reliable remote access
+</details>
 
-### Worker not picking up tasks
-- Check worker is running in terminal
-- Verify database path is correct
-- Check for errors in worker logs
+<details>
+<summary><b>Can't access from iPad via ngrok</b></summary>
 
-## License
+- Ensure both UI and API tunnels are running
+- Set `VITE_API_BASE_URL` in `.env` to your API ngrok URL
+- Restart dev servers after changing `.env`
 
-MIT
+</details>
+
+## 🎯 Tech Stack
+
+- **Runtime**: Bun
+- **Backend**: Express, TypeScript, bun:sqlite, ws
+- **Frontend**: Vite, React, TypeScript, TailwindCSS, shadcn/ui
+- **Icons**: lucide-react
+- **Database**: SQLite with WAL mode
+- **Monorepo**: Bun workspaces
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [shadcn/ui](https://ui.shadcn.com/) components
+- Icons by [Lucide](https://lucide.dev/)
+- Inspired by the need to code from the couch 🛋️
+
+---
+
+<div align="center">
+Made with ❤️ for lazy developers who love their iPads
+</div>
