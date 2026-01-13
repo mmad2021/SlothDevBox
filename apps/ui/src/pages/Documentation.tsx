@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, BookOpen, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
 
 export function Documentation() {
   const [markdown, setMarkdown] = useState('');
@@ -145,53 +147,75 @@ For complete documentation, visit the [GitHub repository](https://github.com/you
               </div>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-sm dark:prose-invert max-w-none">
+              <article className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-pre:bg-muted prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none">
                 <ReactMarkdown 
                   remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeRaw, rehypeSanitize]}
                   components={{
-                    h1: ({node, ...props}) => <h1 className="text-3xl font-bold mt-8 mb-4" {...props} />,
-                    h2: ({node, ...props}) => <h2 className="text-2xl font-bold mt-6 mb-3" {...props} />,
-                    h3: ({node, ...props}) => <h3 className="text-xl font-bold mt-4 mb-2" {...props} />,
-                    h4: ({node, ...props}) => <h4 className="text-lg font-semibold mt-3 mb-2" {...props} />,
-                    p: ({node, ...props}) => <p className="mb-4 leading-7" {...props} />,
-                    ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4 space-y-2" {...props} />,
-                    ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4 space-y-2" {...props} />,
+                    h1: ({node, ...props}) => <h1 className="text-4xl font-bold mt-8 mb-4 border-b pb-2" {...props} />,
+                    h2: ({node, ...props}) => <h2 className="text-3xl font-bold mt-8 mb-4 border-b pb-2" {...props} />,
+                    h3: ({node, ...props}) => <h3 className="text-2xl font-bold mt-6 mb-3" {...props} />,
+                    h4: ({node, ...props}) => <h4 className="text-xl font-semibold mt-4 mb-2" {...props} />,
+                    h5: ({node, ...props}) => <h5 className="text-lg font-semibold mt-3 mb-2" {...props} />,
+                    h6: ({node, ...props}) => <h6 className="text-base font-semibold mt-2 mb-1" {...props} />,
+                    p: ({node, ...props}) => <p className="my-4 leading-7 text-base" {...props} />,
+                    ul: ({node, ...props}) => <ul className="list-disc pl-6 my-4 space-y-2" {...props} />,
+                    ol: ({node, ...props}) => <ol className="list-decimal pl-6 my-4 space-y-2" {...props} />,
                     li: ({node, ...props}) => <li className="leading-7" {...props} />,
-                    code: ({node, inline, ...props}: any) => 
-                      inline ? (
-                        <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props} />
+                    code: ({node, inline, className, children, ...props}: any) => {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return inline ? (
+                        <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground before:content-none after:content-none" {...props}>
+                          {children}
+                        </code>
                       ) : (
-                        <code className="block bg-muted p-4 rounded-lg overflow-x-auto text-sm font-mono" {...props} />
-                      ),
-                    pre: ({node, ...props}) => <pre className="mb-4 overflow-hidden" {...props} />,
+                        <code className={`block bg-muted p-4 rounded-lg overflow-x-auto text-sm font-mono ${match ? `language-${match[1]}` : ''}`} {...props}>
+                          {children}
+                        </code>
+                      );
+                    },
+                    pre: ({node, ...props}) => <pre className="my-4 overflow-hidden rounded-lg" {...props} />,
                     a: ({node, ...props}) => (
                       <a 
-                        className="text-primary hover:underline" 
+                        className="text-primary font-medium hover:underline" 
                         target="_blank" 
                         rel="noopener noreferrer" 
                         {...props} 
                       />
                     ),
                     table: ({node, ...props}) => (
-                      <div className="overflow-x-auto mb-4">
-                        <table className="min-w-full border border-border" {...props} />
+                      <div className="overflow-x-auto my-6">
+                        <table className="min-w-full divide-y divide-border border border-border" {...props} />
                       </div>
                     ),
+                    thead: ({node, ...props}) => <thead className="bg-muted" {...props} />,
                     th: ({node, ...props}) => (
-                      <th className="border border-border px-4 py-2 bg-muted font-semibold text-left" {...props} />
+                      <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider" {...props} />
                     ),
                     td: ({node, ...props}) => (
-                      <td className="border border-border px-4 py-2" {...props} />
+                      <td className="px-6 py-4 whitespace-normal text-sm" {...props} />
                     ),
+                    tr: ({node, ...props}) => <tr className="border-b border-border" {...props} />,
                     blockquote: ({node, ...props}) => (
-                      <blockquote className="border-l-4 border-primary pl-4 italic my-4" {...props} />
+                      <blockquote className="border-l-4 border-primary pl-4 italic my-6 text-muted-foreground" {...props} />
                     ),
-                    hr: ({node, ...props}) => <hr className="my-8 border-border" {...props} />,
+                    hr: ({node, ...props}) => <hr className="my-8 border-t-2 border-border" {...props} />,
+                    img: ({node, ...props}) => (
+                      <img className="rounded-lg shadow-lg my-6 max-w-full h-auto" {...props} />
+                    ),
+                    strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
+                    em: ({node, ...props}) => <em className="italic" {...props} />,
+                    details: ({node, ...props}) => (
+                      <details className="my-4 border border-border rounded-lg p-4" {...props} />
+                    ),
+                    summary: ({node, ...props}) => (
+                      <summary className="font-semibold cursor-pointer hover:text-primary" {...props} />
+                    ),
                   }}
                 >
                   {markdown}
                 </ReactMarkdown>
-              </div>
+              </article>
             </CardContent>
           </Card>
         )}
@@ -199,3 +223,4 @@ For complete documentation, visit the [GitHub repository](https://github.com/you
     </div>
   );
 }
+
