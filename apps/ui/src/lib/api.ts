@@ -49,6 +49,18 @@ export const api = {
   }),
   
   getRecipes: () => fetchApi('/recipes'),
+  getRecipe: (id: string) => fetchApi(`/recipes/${id}`),
+  createRecipe: (data: any) => fetchApi('/recipes', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  updateRecipe: (id: string, data: any) => fetchApi(`/recipes/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  deleteRecipe: (id: string) => fetchApi(`/recipes/${id}`, {
+    method: 'DELETE',
+  }),
   
   getTasks: () => fetchApi('/tasks'),
   getTask: (id: string) => fetchApi(`/tasks/${id}`),

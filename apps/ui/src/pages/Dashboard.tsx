@@ -4,7 +4,7 @@ import { api, clearApiToken } from '@/lib/api';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, RefreshCw, FolderOpen, Moon, Sun, LogOut } from 'lucide-react';
+import { Plus, RefreshCw, FolderOpen, Moon, Sun, LogOut, BookOpen } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import type { Task } from '@devcenter/shared';
 
@@ -62,6 +62,12 @@ export function Dashboard() {
           <Button variant="outline" size="icon" onClick={handleLogout} title="Logout">
             <LogOut className="h-4 w-4" />
           </Button>
+          <Link to="/recipes">
+            <Button variant="outline">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Recipes
+            </Button>
+          </Link>
           <Link to="/projects">
             <Button variant="outline">
               <FolderOpen className="h-4 w-4 mr-2" />
