@@ -1,22 +1,31 @@
 # 🦥 SlothDevBox
 
-> A self-hosted command center for running dev tasks on your Mac from anywhere - iPad, iPhone, or any device with a browser.
+> A self-hosted dev task automation platform - Control your development machine from anywhere with AI-powered assistance.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Control your development workflow from your couch.** SlothDevBox turns your Mac into a remote dev automation server with a mobile-friendly web interface. Create tasks, watch live logs, and manage your projects - all from your iPad.
+**Code from anywhere, anytime.** SlothDevBox turns your development machine into a remote automation server with a mobile-friendly web interface. Create tasks, watch live logs, leverage AI coding assistants, and manage your entire dev workflow - all from any device with a browser.
 
 ## ✨ Features
 
 - 📱 **Mobile-First UI** - Beautiful, responsive interface built with shadcn/ui
 - 🎨 **Dark Mode** - Easy on the eyes, day or night
 - 🔄 **Live Streaming Logs** - Watch task execution in real-time via WebSocket
-- 🎯 **Recipe System** - Create custom automation workflows with a visual builder
+- 🧩 **Step Templates System** - Create reusable step configurations with JSON Schema
+- 🎯 **Visual Recipe Builder** - Build automation workflows with drag-and-drop simplicity
 - 🤖 **GitHub Copilot Integration** - AI-powered code assistance (optional)
 - 🚀 **Preview URLs** - Instant dev server access from mobile
 - 📊 **Task History** - Track all executions with artifacts and logs
 - 🔒 **Secure** - Token-based auth, no arbitrary command execution
 - 🌐 **Remote Access** - ngrok, Tailscale, or Cloudflare Tunnel support
+
+## 🎯 Use Cases
+
+- **Remote Development** - Work on your powerful dev machine from a tablet or phone
+- **AI-Assisted Coding** - Let GitHub Copilot review code, fix bugs, and suggest implementations
+- **Mobile Preview Testing** - Start dev servers and test on mobile devices instantly
+- **Automated Workflows** - Run tests, builds, and deployments with a tap
+- **Team Collaboration** - Share your dev environment securely with teammates
 
 ## 📸 Screenshots
 
@@ -25,23 +34,32 @@
 
 - View all tasks with status badges
 - Dark/light mode toggle
-- Quick access to projects, recipes, and new tasks
+- Quick access to projects, recipes, and step templates
 
 </details>
 
 <details>
-<summary>Recipe Manager</summary>
+<summary>Step Templates Manager</summary>
+
+- Create reusable step configurations
+- JSON Schema validation
+- Built-in templates for common operations
+
+</details>
+
+<details>
+<summary>Recipe Builder</summary>
 
 - Visual recipe builder with step-by-step configuration
 - Create, view, and delete automation recipes
-- Support for multiple step types (commands, git, copilot)
+- Support for multiple step types
 
 </details>
 
 <details>
 <summary>Task Detail</summary>
 
-- Live streaming logs
+- Live streaming logs with intelligent auto-scroll
 - Task status and metadata
 - Artifacts (preview URLs, diffs, notes)
 
@@ -52,7 +70,7 @@
 ### Prerequisites
 
 - **Bun** (v1.0.0+) - [Install Bun](https://bun.sh)
-- **Mac** - Primary dev machine (where tasks run)
+- **A development machine** - Where your code lives and tasks run
 - **GitHub Copilot CLI** (optional) - For AI features
 
 ### Installation
@@ -89,6 +107,11 @@ DB_PATH=./data/devcenter.db
 ```bash
 bun run db:setup
 ```
+
+This creates the database and seeds:
+- 5 default step templates (check_path, command, start_preview, git, copilot)
+- Example project
+- Built-in recipes
 
 5. **Start the services**
 
@@ -136,13 +159,13 @@ ngrok start --all --config ~/ngrok.yml
 VITE_API_BASE_URL=https://your-api-url.ngrok-free.app
 ```
 
-4. Restart dev servers and access UI from iPad using the UI tunnel URL.
+4. Restart dev servers and access UI from any device using the UI tunnel URL.
 
 ### Option 2: Tailscale (Recommended for persistent access)
 
-1. Install [Tailscale](https://tailscale.com) on your Mac
+1. Install [Tailscale](https://tailscale.com) on your dev machine
 2. Get your Tailscale IP: `tailscale ip -4`
-3. Access from any device: `http://YOUR_TAILSCALE_IP:5173`
+3. Access from any device on your tailnet: `http://YOUR_TAILSCALE_IP:5173`
 
 ### Option 3: Cloudflare Tunnel
 
@@ -150,7 +173,7 @@ VITE_API_BASE_URL=https://your-api-url.ngrok-free.app
 cloudflared tunnel --url http://localhost:5173
 ```
 
-## 🎯 Usage
+## 🎯 Usage Guide
 
 ### 1. Add Your Projects
 
@@ -166,7 +189,7 @@ export const seedProjects = [
   {
     id: 'my-app',
     name: 'My App',
-    path: '/Users/you/projects/my-app',
+    path: '/path/to/your/project',
     defaultDevPort: 5173,
   },
 ];
@@ -174,12 +197,47 @@ export const seedProjects = [
 
 Then run: `bun run db:setup`
 
-### 2. Create Recipes
+### 2. Create Step Templates (Optional)
+
+Step templates are reusable step configurations that ensure consistency across recipes.
 
 Via UI:
-- Go to **Recipes** page
-- Click **New Recipe**
-- Configure steps with the visual builder
+1. Go to **Recipes** → **Step Templates**
+2. Click **New Template**
+3. Define the step type and JSON Schema for configuration
+
+Example template:
+
+```json
+{
+  "id": "run-npm-build",
+  "name": "Run NPM Build",
+  "description": "Execute npm build command",
+  "type": "command",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "command": { "type": "string" },
+      "args": { "type": "array", "items": { "type": "string" } }
+    },
+    "required": ["command"]
+  }
+}
+```
+
+**5 Default Templates Included:**
+- `check_path` - Validates project directory exists
+- `command` - Run shell commands (bun, npm, git)
+- `start_preview` - Launch dev servers with preview URLs
+- `git` - Git operations (diff, branch, checkout)
+- `copilot` - GitHub Copilot CLI integration
+
+### 3. Create Recipes
+
+Via UI:
+1. Go to **Recipes** page
+2. Click **New Recipe**
+3. Configure steps using available step templates
 
 Example recipe (Run Tests):
 
@@ -199,7 +257,7 @@ Example recipe (Run Tests):
 }
 ```
 
-### 3. Run Tasks
+### 4. Run Tasks
 
 1. Click **New Task** from Dashboard
 2. Select a project and recipe
@@ -207,15 +265,68 @@ Example recipe (Run Tests):
 4. Click **Create Task**
 5. Watch live logs stream in real-time! 🔥
 
-## 🎨 Recipe Step Types
+## 🧩 Step Templates System
+
+Step templates provide a type-safe, reusable way to define step configurations.
+
+### Benefits
+
+- ✅ **Consistency** - Standardized step configurations across recipes
+- ✅ **Validation** - JSON Schema ensures correct configuration
+- ✅ **Reusability** - Create once, use in multiple recipes
+- ✅ **Documentation** - Self-documenting with descriptions and schemas
+- ✅ **Extensibility** - Easy to add new step types
+
+### Step Type Reference
 
 | Step Type | Description | Use Case |
 |-----------|-------------|----------|
-| `check_path` | Validates project directory exists | Safety check |
+| `check_path` | Validates project directory exists | Safety check before operations |
 | `command` | Run allowed commands (bun, npm, git) | Build, test, lint |
 | `start_preview` | Launch dev server with preview URL | Remote development |
 | `git` | Git operations (diff, branch, etc.) | Version control |
 | `copilot` | GitHub Copilot CLI integration | AI assistance |
+
+### Creating Custom Step Types
+
+1. Define a new step template with a unique type
+2. Create JSON Schema for required configuration
+3. Update the worker executor to handle the new type
+4. Use in recipes!
+
+## 🤖 GitHub Copilot Integration
+
+SlothDevBox includes built-in recipes for AI-assisted development.
+
+### Prerequisites
+
+```bash
+# Install GitHub Copilot CLI
+npm install -g @github/copilot
+
+# Verify installation
+copilot "explain how promises work"
+```
+
+### Built-In Copilot Recipes
+
+1. **Copilot: Explain Code** - Ask AI about code concepts
+2. **Copilot: Fix Bug** - Get AI help debugging issues
+3. **Copilot: Implement Feature** - AI implementation guidance
+4. **Copilot: Review Changes** - AI code review of uncommitted changes
+
+### Example Usage
+
+```
+Recipe: Copilot: Fix Bug
+Goal: "API returns 500 error when user submits empty form"
+
+Result:
+✅ Copilot analyzes the issue
+✅ Suggests adding form validation
+✅ Recommends error handling improvements
+✅ Response saved as artifact for reference
+```
 
 ## 🏗️ Project Structure
 
@@ -240,18 +351,7 @@ SlothDevBox/
 - ✅ Blocks dangerous patterns: `sudo`, `rm -rf`, etc.
 - ✅ Bearer token authentication on all routes
 - ✅ CORS enabled for remote access
-
-## 🛠️ Built-In Recipes
-
-SlothDevBox includes these recipes out of the box:
-
-1. **Start Preview (Vite)** - Launch dev server with public URL
-2. **Run Tests** - Execute your test suite
-3. **Copilot: Explain Code** - Ask AI about code concepts
-4. **Copilot: Fix Bug** - Get AI help debugging
-5. **Copilot: Implement Feature** - AI implementation guidance
-6. **Copilot: Review Changes** - AI code review
-7. **Create Branch + Diff** - Git workflow automation
+- ✅ JSON Schema validation for step configurations
 
 ## 📦 Production Deployment
 
@@ -299,11 +399,22 @@ copilot "explain how promises work"
 </details>
 
 <details>
-<summary><b>Can't access from iPad via ngrok</b></summary>
+<summary><b>Can't access from remote device via ngrok</b></summary>
 
 - Ensure both UI and API tunnels are running
 - Set `VITE_API_BASE_URL` in `.env` to your API ngrok URL
 - Restart dev servers after changing `.env`
+
+</details>
+
+<details>
+<summary><b>Step templates not appearing</b></summary>
+
+Run database setup to seed default templates:
+
+```bash
+bun run db:setup
+```
 
 </details>
 
@@ -316,9 +427,18 @@ copilot "explain how promises work"
 - **Database**: SQLite with WAL mode
 - **Monorepo**: Bun workspaces
 
+## 🗺️ Roadmap
+
+- [ ] Recipe templates marketplace
+- [ ] Multi-user support with roles
+- [ ] Scheduled tasks (cron-like)
+- [ ] Integration with more AI coding assistants
+- [ ] Docker deployment support
+- [ ] Plugin system for custom step types
+
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -334,10 +454,10 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 - Built with [shadcn/ui](https://ui.shadcn.com/) components
 - Icons by [Lucide](https://lucide.dev/)
-- Inspired by the need to code from the couch 🛋️
+- Inspired by the need to code from anywhere 🌍
 
 ---
 
 <div align="center">
-Made with ❤️ for lazy developers who love their iPads
+Made with ❤️ for developers who value flexibility
 </div>
