@@ -42,6 +42,7 @@ export function TaskDetail() {
     loadTask();
 
     // Determine WebSocket URL
+    const token = getApiToken();
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
     let wsUrl: string;
     
