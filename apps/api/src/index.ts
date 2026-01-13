@@ -1,5 +1,6 @@
 import express from 'express';
 import { createServer } from 'http';
+import cors from 'cors';
 import path from 'path';
 import { authMiddleware } from './middleware/auth';
 import healthRoutes from './routes/health';
@@ -10,6 +11,14 @@ import { setupWebSocket } from './websocket/server';
 
 const app = express();
 const server = createServer(app);
+
+// Enable CORS for development/remote access
+if (process.env.NODE_ENV !== 'production') {
+  app.use(cors({
+    origin: true, // Allow all origins in dev
+    credentials: true,
+  }));
+}
 
 app.use(express.json());
 
