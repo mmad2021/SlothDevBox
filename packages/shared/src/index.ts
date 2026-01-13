@@ -20,6 +20,15 @@ export interface Project {
   createdAt: string;
 }
 
+export interface StepTemplate {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  configSchema: string; // JSON schema for validation
+  createdAt: string;
+}
+
 export interface Recipe {
   id: string;
   name: string;

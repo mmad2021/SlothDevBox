@@ -5,44 +5,47 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Plus, Pencil, Trash2, Code } from 'lucide-react';
-import type { Recipe } from '@devcenter/shared';
+import type { StepTemplate } from '@devcenter/shared';
 
-export function Recipes() {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+export function StepTemplates() {
+  const [templates, setTemplates] = useState<StepTemplate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<StepTemplate | null>(null);
 
-  const loadRecipes = async () => {
+  const loadTemplates = async () => {
     try {
-      const data = await api.getRecipes();
-      setRecipes(data);
+      const data = await api.getStepTemplates();
+      setTemplates(data);
     } catch (error) {
-      console.error('Failed to load recipes:', error);
+      console.error('Failed to load step templates:', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadRecipes();
+    loadTemplates();
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this recipe?')) return;
+    if (!confirm('Are you sure you want to delete this step template?')) return;
     
     try {
-      await api.deleteRecipe(id);
-      await loadRecipes();
+      await api.deleteStepTemplate(id);
+      await loadTemplates();
+      if (selectedTemplate?.id === id) {
+        setSelectedTemplate(null);
+      }
     } catch (error: any) {
       alert(`Failed to delete: ${error.message}`);
     }
   };
 
-  const parseSteps = (recipe: Recipe) => {
+  const parseConfigSchema = (template: StepTemplate) => {
     try {
-      return JSON.parse(recipe.stepsJson);
+      return JSON.parse(template.configSchema);
     } catch {
-      return [];
+      return {};
     }
   };
 
@@ -51,30 +54,22 @@ export function Recipes() {
       <div className="container mx-auto p-4 max-w-6xl">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            <Link to="/">
+            <Link to="/recipes">
               <Button variant="outline" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold">Recipe Manager</h1>
-              <p className="text-muted-foreground">Manage task automation recipes</p>
+              <h1 className="text-3xl font-bold">Step Templates</h1>
+              <p className="text-muted-foreground">Manage reusable step configurations</p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Link to="/step-templates">
-              <Button variant="outline">
-                <Code className="h-4 w-4 mr-2" />
-                Step Templates
-              </Button>
-            </Link>
-            <Link to="/recipes/new">
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                New Recipe
-              </Button>
-            </Link>
-          </div>
+          <Link to="/step-templates/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Template
+            </Button>
+          </Link>
         </div>
 
         {loading ? (
@@ -82,23 +77,21 @@ export function Recipes() {
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-4">
-              {recipes.map((recipe) => (
+              {templates.map((template) => (
                 <Card 
-                  key={recipe.id}
+                  key={template.id}
                   className={`cursor-pointer transition-colors ${
-                    selectedRecipe?.id === recipe.id ? 'border-primary' : 'hover:bg-accent'
+                    selectedTemplate?.id === template.id ? 'border-primary' : 'hover:bg-accent'
                   }`}
-                  onClick={() => setSelectedRecipe(recipe)}
+                  onClick={() => setSelectedTemplate(template)}
                 >
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <CardTitle className="text-lg">{recipe.name}</CardTitle>
-                        <CardDescription className="mt-1">{recipe.description}</CardDescription>
+                        <CardTitle className="text-lg">{template.name}</CardTitle>
+                        <CardDescription className="mt-1">{template.description}</CardDescription>
                         <div className="mt-2">
-                          <Badge variant="outline">
-                            {parseSteps(recipe).length} steps
-                          </Badge>
+                          <Badge variant="secondary">{template.type}</Badge>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -117,7 +110,7 @@ export function Recipes() {
                           size="icon"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDelete(recipe.id);
+                            handleDelete(template.id);
                           }}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
@@ -130,37 +123,41 @@ export function Recipes() {
             </div>
 
             <div>
-              {selectedRecipe ? (
+              {selectedTemplate ? (
                 <Card className="sticky top-4">
                   <CardHeader>
                     <div className="flex items-center gap-2">
                       <Code className="h-5 w-5" />
-                      <CardTitle>Recipe Details</CardTitle>
+                      <CardTitle>Template Details</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
                       <div className="text-sm font-semibold mb-1">Name</div>
-                      <div className="text-sm text-muted-foreground">{selectedRecipe.name}</div>
+                      <div className="text-sm text-muted-foreground">{selectedTemplate.name}</div>
                     </div>
                     <div>
                       <div className="text-sm font-semibold mb-1">Description</div>
-                      <div className="text-sm text-muted-foreground">{selectedRecipe.description}</div>
+                      <div className="text-sm text-muted-foreground">{selectedTemplate.description}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold mb-1">Type</div>
+                      <Badge variant="secondary">{selectedTemplate.type}</Badge>
                     </div>
                     <div>
                       <div className="text-sm font-semibold mb-1">ID</div>
-                      <code className="text-xs bg-muted px-2 py-1 rounded">{selectedRecipe.id}</code>
+                      <code className="text-xs bg-muted px-2 py-1 rounded">{selectedTemplate.id}</code>
                     </div>
                     <div>
-                      <div className="text-sm font-semibold mb-2">Steps</div>
+                      <div className="text-sm font-semibold mb-2">Config Schema</div>
                       <pre className="text-xs bg-muted p-3 rounded overflow-x-auto">
-                        {JSON.stringify(parseSteps(selectedRecipe), null, 2)}
+                        {JSON.stringify(parseConfigSchema(selectedTemplate), null, 2)}
                       </pre>
                     </div>
                     <div>
                       <div className="text-sm font-semibold mb-1">Created</div>
                       <div className="text-sm text-muted-foreground">
-                        {new Date(selectedRecipe.createdAt).toLocaleString()}
+                        {new Date(selectedTemplate.createdAt).toLocaleString()}
                       </div>
                     </div>
                   </CardContent>
@@ -168,7 +165,7 @@ export function Recipes() {
               ) : (
                 <Card>
                   <CardContent className="py-12 text-center text-muted-foreground">
-                    Select a recipe to view details
+                    Select a template to view details
                   </CardContent>
                 </Card>
               )}

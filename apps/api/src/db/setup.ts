@@ -1,12 +1,35 @@
 import { db } from './database';
 import { schema } from './schema';
 import { seedProjects, seedRecipes } from './seed';
+import { seedStepTemplates } from './seed-step-templates';
 
 console.log('Setting up database...');
 
 // Create tables
 db.exec(schema);
 console.log('✓ Tables created');
+
+// Seed step templates
+const existingStepTemplates = db.query('SELECT COUNT(*) as count FROM step_templates').get() as { count: number };
+if (existingStepTemplates.count === 0) {
+  const insertStepTemplate = db.prepare(
+    'INSERT INTO step_templates (id, name, description, type, configSchema, createdAt) VALUES (?, ?, ?, ?, ?, ?)'
+  );
+  
+  for (const template of seedStepTemplates) {
+    insertStepTemplate.run(
+      template.id,
+      template.name,
+      template.description,
+      template.type,
+      template.configSchema,
+      new Date().toISOString()
+    );
+  }
+  console.log(`✓ Seeded ${seedStepTemplates.length} step templates`);
+} else {
+  console.log('✓ Step templates already exist, skipping seed');
+}
 
 // Seed projects
 const existingProjects = db.query('SELECT COUNT(*) as count FROM projects').get() as { count: number };

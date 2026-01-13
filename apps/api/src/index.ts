@@ -6,6 +6,7 @@ import { authMiddleware } from './middleware/auth';
 import healthRoutes from './routes/health';
 import projectsRoutes from './routes/projects';
 import recipesRoutes from './routes/recipes';
+import stepTemplatesRoutes from './routes/step-templates';
 import tasksRoutes from './routes/tasks';
 import { setupWebSocket } from './websocket/server';
 
@@ -29,6 +30,7 @@ app.use('/api', healthRoutes);
 app.use('/api', authMiddleware);
 app.use('/api', projectsRoutes);
 app.use('/api', recipesRoutes);
+app.use('/api', stepTemplatesRoutes);
 app.use('/api', tasksRoutes);
 
 // Serve frontend in production

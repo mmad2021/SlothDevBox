@@ -7,6 +7,15 @@ CREATE TABLE IF NOT EXISTS projects (
   createdAt TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS step_templates (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  type TEXT NOT NULL,
+  configSchema TEXT NOT NULL,
+  createdAt TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS recipes (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,

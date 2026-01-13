@@ -7,6 +7,8 @@ import { TaskDetail } from './pages/TaskDetail';
 import { Projects } from './pages/Projects';
 import { Recipes } from './pages/Recipes';
 import { RecipeForm } from './pages/RecipeForm';
+import { StepTemplates } from './pages/StepTemplates';
+import { StepTemplateForm } from './pages/StepTemplateForm';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = getApiToken();
@@ -47,6 +49,22 @@ function App() {
           element={
             <ProtectedRoute>
               <RecipeForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/step-templates"
+          element={
+            <ProtectedRoute>
+              <StepTemplates />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/step-templates/new"
+          element={
+            <ProtectedRoute>
+              <StepTemplateForm />
             </ProtectedRoute>
           }
         />

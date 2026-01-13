@@ -48,6 +48,20 @@ export const api = {
     body: JSON.stringify(data),
   }),
   
+  getStepTemplates: () => fetchApi('/step-templates'),
+  getStepTemplate: (id: string) => fetchApi(`/step-templates/${id}`),
+  createStepTemplate: (data: any) => fetchApi('/step-templates', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  updateStepTemplate: (id: string, data: any) => fetchApi(`/step-templates/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  deleteStepTemplate: (id: string) => fetchApi(`/step-templates/${id}`, {
+    method: 'DELETE',
+  }),
+  
   getRecipes: () => fetchApi('/recipes'),
   getRecipe: (id: string) => fetchApi(`/recipes/${id}`),
   createRecipe: (data: any) => fetchApi('/recipes', {
