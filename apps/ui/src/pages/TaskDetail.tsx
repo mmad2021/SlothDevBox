@@ -33,7 +33,8 @@ export function TaskDetail() {
       try {
         const data = await api.getTask(id);
         setTask(data);
-        if (data.logs) {
+        // Only load logs on initial load, not on refresh (WebSocket handles updates)
+        if (logs.length === 0 && data.logs) {
           setLogs(data.logs.map((l: { ts: string; stream: string; line: string }) => ({ ts: l.ts, stream: l.stream, line: l.line })));
         }
       } catch (error) {
