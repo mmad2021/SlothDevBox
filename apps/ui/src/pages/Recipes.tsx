@@ -61,10 +61,12 @@ export function Recipes() {
               <p className="text-muted-foreground">Manage task automation recipes</p>
             </div>
           </div>
-          <Button disabled>
-            <Plus className="h-4 w-4 mr-2" />
-            New Recipe
-          </Button>
+          <Link to="/recipes/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Recipe
+            </Button>
+          </Link>
         </div>
 
         {loading ? (

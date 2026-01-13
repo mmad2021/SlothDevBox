@@ -6,6 +6,7 @@ import { NewTask } from './pages/NewTask';
 import { TaskDetail } from './pages/TaskDetail';
 import { Projects } from './pages/Projects';
 import { Recipes } from './pages/Recipes';
+import { RecipeForm } from './pages/RecipeForm';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = getApiToken();
@@ -38,6 +39,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Recipes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/recipes/new"
+          element={
+            <ProtectedRoute>
+              <RecipeForm />
             </ProtectedRoute>
           }
         />
