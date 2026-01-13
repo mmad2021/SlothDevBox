@@ -11,15 +11,94 @@ export function Documentation() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch README from GitHub or local
+    // Fetch README from multiple sources with fallback
     const fetchDocs = async () => {
       try {
-        const response = await fetch('https://raw.githubusercontent.com/mmad2021/SlothDevBox/master/README.md');
+        // Try to fetch from local public folder first
+        let response = await fetch('/README.md');
+        
+        // If not found locally, try GitHub
+        if (!response.ok) {
+          // Update this URL to your actual GitHub repository
+          response = await fetch('https://raw.githubusercontent.com/yourusername/SlothDevBox/master/README.md');
+        }
+        
+        if (!response.ok) {
+          throw new Error('Documentation not found');
+        }
+        
         const text = await response.text();
         setMarkdown(text);
       } catch (error) {
         console.error('Failed to load documentation:', error);
-        setMarkdown('# Documentation\n\nFailed to load documentation. Please visit the [GitHub repository](https://github.com/mmad2021/SlothDevBox) to view the README.');
+        // Provide embedded documentation as fallback
+        setMarkdown(`# 🦥 SlothDevBox
+
+> A self-hosted dev task automation platform
+
+## Quick Start
+
+SlothDevBox is a remote development automation server with a mobile-friendly web interface.
+
+### Features
+
+- 📱 Mobile-First UI with dark mode
+- 🔄 Live streaming logs via WebSocket
+- 🧩 Step Templates system for reusable configurations
+- 🎯 Visual Recipe Builder
+- 🤖 GitHub Copilot integration
+- 🔒 Secure token-based authentication
+
+### Getting Started
+
+1. **Setup Database**
+   \`\`\`bash
+   bun run db:setup
+   \`\`\`
+
+2. **Start Services**
+   \`\`\`bash
+   bun run dev
+   \`\`\`
+
+3. **Access UI**
+   Open http://localhost:5173
+
+### Usage
+
+1. **Add Projects** - Define your development projects
+2. **Create Step Templates** - Build reusable step configurations
+3. **Build Recipes** - Combine steps into automation workflows
+4. **Run Tasks** - Execute recipes with live log streaming
+
+### Step Templates
+
+Step templates define reusable configurations:
+- \`check_path\` - Validates project directory
+- \`command\` - Run shell commands
+- \`start_preview\` - Launch dev servers
+- \`git\` - Git operations
+- \`copilot\` - GitHub Copilot integration
+
+### Remote Access
+
+Use ngrok, Tailscale, or Cloudflare Tunnel for remote access.
+
+### Documentation
+
+For complete documentation, visit the [GitHub repository](https://github.com/yourusername/SlothDevBox).
+
+### Tech Stack
+
+- Runtime: Bun
+- Backend: Express + TypeScript
+- Frontend: Vite + React + shadcn/ui
+- Database: SQLite
+
+---
+
+*Note: Full documentation failed to load. Please check your internet connection or visit the GitHub repository.*
+`);
       } finally {
         setLoading(false);
       }
@@ -44,7 +123,7 @@ export function Documentation() {
             </div>
           </div>
           <a 
-            href="https://github.com/mmad2021/SlothDevBox" 
+            href="https://github.com/yourusername/SlothDevBox" 
             target="_blank" 
             rel="noopener noreferrer"
           >
@@ -70,7 +149,6 @@ export function Documentation() {
                 <ReactMarkdown 
                   remarkPlugins={[remarkGfm]}
                   components={{
-                    // Custom styling for markdown elements
                     h1: ({node, ...props}) => <h1 className="text-3xl font-bold mt-8 mb-4" {...props} />,
                     h2: ({node, ...props}) => <h2 className="text-2xl font-bold mt-6 mb-3" {...props} />,
                     h3: ({node, ...props}) => <h3 className="text-xl font-bold mt-4 mb-2" {...props} />,
