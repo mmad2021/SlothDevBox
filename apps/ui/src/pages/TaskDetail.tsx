@@ -41,10 +41,23 @@ export function TaskDetail() {
 
     loadTask();
 
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsHost = window.location.host;
-    const token = getApiToken();
-    const ws = new WebSocket(`${wsProtocol}//${wsHost}/ws?token=${token}`);
+    // Determine WebSocket URL
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+    let wsUrl: string;
+    
+    if (API_BASE_URL) {
+      // Use explicit API base URL
+      const apiUrl = new URL(API_BASE_URL);
+      const wsProtocol = apiUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsUrl = `${wsProtocol}//${apiUrl.host}/ws?token=${token}`;
+    } else {
+      // Use relative path (local dev with Vite proxy)
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsHost = window.location.host;
+      wsUrl = `${wsProtocol}//${wsHost}/ws?token=${token}`;
+    }
+    
+    const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
       ws.send(JSON.stringify({ type: 'subscribe', taskId: id }));

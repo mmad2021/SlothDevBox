@@ -1,3 +1,6 @@
+// Use environment variable or fallback to relative path for dev proxy
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 export function setApiToken(token: string) {
   localStorage.setItem('api_token', token);
 }
@@ -9,7 +12,7 @@ export function getApiToken(): string {
 async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = getApiToken();
   
-  const response = await fetch(`/api${endpoint}`, {
+  const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -27,7 +30,7 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
 }
 
 export const api = {
-  getHealth: () => fetch('/api/health').then(r => r.json()),
+  getHealth: () => fetch(`${API_BASE_URL}/api/health`).then(r => r.json()),
   
   getProjects: () => fetchApi('/projects'),
   createProject: (data: any) => fetchApi('/projects', {
