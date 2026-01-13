@@ -1,4 +1,4 @@
-# 🎉 Dev Command Center - MVP Complete!
+# 🎉 SlothDevBox - MVP Complete!
 
 ## ✅ What's Been Built
 

@@ -1,4 +1,4 @@
-# Dev Command Center - Quick Start
+# SlothDevBox - Quick Start
 
 ## ✅ Prerequisites
 - Bun installed (https://bun.sh)

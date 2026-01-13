@@ -1,6 +1,6 @@
-# 📖 Dev Command Center - Documentation Index
+# 📖 SlothDevBox - Documentation Index
 
-Welcome! This is your complete guide to the Dev Command Center.
+Welcome! This is your complete guide to the SlothDevBox.
 
 ## 🚦 Start Here
 

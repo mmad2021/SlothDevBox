@@ -1,4 +1,4 @@
-# Dev Command Center - Setup Guide
+# SlothDevBox - Setup Guide
 
 ## Quick Start
 

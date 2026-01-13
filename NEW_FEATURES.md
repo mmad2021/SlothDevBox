@@ -108,4 +108,4 @@ Projects are stored in SQLite `projects` table with auto-generated IDs.
 
 ---
 
-This feature makes the Dev Command Center truly iPad-native! No more editing files on the server - manage everything from your browser.
+This feature makes the SlothDevBox truly iPad-native! No more editing files on the server - manage everything from your browser.

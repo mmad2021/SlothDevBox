@@ -4,7 +4,8 @@ import { api } from '@/lib/api';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, RefreshCw, FolderOpen } from 'lucide-react';
+import { Plus, RefreshCw, FolderOpen, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/components/ThemeProvider';
 import type { Task } from '@devcenter/shared';
 
 const statusColors = {
@@ -18,6 +19,7 @@ const statusColors = {
 export function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const { theme, toggleTheme } = useTheme();
 
   const loadTasks = async () => {
     try {
@@ -40,10 +42,13 @@ export function Dashboard() {
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Dev Command Center</h1>
+          <h1 className="text-3xl font-bold">SlothDevBox</h1>
           <p className="text-muted-foreground">Manage your development tasks</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" size="icon" onClick={toggleTheme} title="Toggle theme">
+            {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </Button>
           <Link to="/projects">
             <Button variant="outline">
               <FolderOpen className="h-4 w-4 mr-2" />

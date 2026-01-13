@@ -1,4 +1,4 @@
-# Dev Command Center
+# SlothDevBox
 
 A self-hosted command center for running dev tasks on a Mac mini from iPad/mobile with **GitHub Copilot integration**.
 
