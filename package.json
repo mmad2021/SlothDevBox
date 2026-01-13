@@ -1,0 +1,22 @@
+{
+  "name": "dev-command-center",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "echo 'Starting all services...' && bun --env-file=.env run dev:api & bun --env-file=.env run dev:ui & bun --env-file=.env run dev:worker",
+    "dev:api": "bun --env-file=.env run --filter '@devcenter/api' dev",
+    "dev:ui": "bun --env-file=.env run --filter '@devcenter/ui' dev",
+    "dev:worker": "bun --env-file=.env run --filter '@devcenter/worker' dev",
+    "build": "bun run --filter '@devcenter/shared' build && bun run --filter '@devcenter/ui' build && bun run --filter '@devcenter/api' build",
+    "start": "NODE_ENV=production bun --env-file=.env run --filter '@devcenter/api' start & bun --env-file=.env run --filter '@devcenter/worker' start",
+    "db:setup": "bun --env-file=.env run --filter '@devcenter/api' db:setup"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.3.3"
+  }
+}
