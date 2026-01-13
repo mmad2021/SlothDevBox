@@ -22,7 +22,9 @@ export function TaskDetail() {
   const [logs, setLogs] = useState<Array<{ ts: string; stream: string; line: string }>>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const logsEndRef = useRef<HTMLDivElement>(null);
+  const logsContainerRef = useRef<HTMLDivElement>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [autoScroll, setAutoScroll] = useState(true);
 
   useEffect(() => {
     if (!id) return;
@@ -82,8 +84,19 @@ export function TaskDetail() {
   }, [id]);
 
   useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [logs]);
+    if (autoScroll) {
+      logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [logs, autoScroll]);
+
+  const handleScroll = () => {
+    if (!logsContainerRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = logsContainerRef.current;
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 50; // 50px threshold
+    
+    setAutoScroll(isAtBottom);
+  };
 
   const handleCancel = async () => {
     if (!id || !task) return;
@@ -209,7 +222,11 @@ export function TaskDetail() {
             <CardTitle>Live Logs</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="bg-black text-green-400 p-4 rounded font-mono text-xs overflow-y-auto max-h-96">
+            <div 
+              ref={logsContainerRef}
+              onScroll={handleScroll}
+              className="bg-black text-green-400 p-4 rounded font-mono text-xs overflow-y-auto max-h-96"
+            >
               {logs.length === 0 ? (
                 <div className="text-gray-500">No logs yet...</div>
               ) : (
