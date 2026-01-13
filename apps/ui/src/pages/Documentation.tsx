@@ -88,7 +88,7 @@ Use ngrok, Tailscale, or Cloudflare Tunnel for remote access.
 
 ### Documentation
 
-For complete documentation, visit the [GitHub repository](https://github.com/yourusername/SlothDevBox).
+For complete documentation, visit the [GitHub repository](https://github.com/mmad2021/SlothDevBox).
 
 ### Tech Stack
 
@@ -125,7 +125,7 @@ For complete documentation, visit the [GitHub repository](https://github.com/you
             </div>
           </div>
           <a 
-            href="https://github.com/yourusername/SlothDevBox" 
+            href="https://github.com/mmad2021/SlothDevBox" 
             target="_blank" 
             rel="noopener noreferrer"
           >

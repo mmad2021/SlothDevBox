@@ -78,7 +78,7 @@
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/SlothDevBox.git
+git clone https://github.com/mmad2021/SlothDevBox.git
 cd SlothDevBox
 ```
 
