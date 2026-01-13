@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { api } from '@/lib/api';
+import { Link, useNavigate } from 'react-router-dom';
+import { api, clearApiToken } from '@/lib/api';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, RefreshCw, FolderOpen, Moon, Sun } from 'lucide-react';
+import { Plus, RefreshCw, FolderOpen, Moon, Sun, LogOut } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import type { Task } from '@devcenter/shared';
 
@@ -20,13 +20,23 @@ export function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    clearApiToken();
+    navigate('/login');
+  };
 
   const loadTasks = async () => {
     try {
       const data = await api.getTasks();
       setTasks(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to load tasks:', error);
+      // Don't show error if redirecting to login (401)
+      if (!error.message?.includes('Unauthorized')) {
+        // Could show a toast notification here
+      }
     } finally {
       setLoading(false);
     }
@@ -48,6 +58,9 @@ export function Dashboard() {
         <div className="flex gap-2">
           <Button variant="outline" size="icon" onClick={toggleTheme} title="Toggle theme">
             {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </Button>
+          <Button variant="outline" size="icon" onClick={handleLogout} title="Logout">
+            <LogOut className="h-4 w-4" />
           </Button>
           <Link to="/projects">
             <Button variant="outline">

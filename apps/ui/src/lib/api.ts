@@ -9,6 +9,10 @@ export function getApiToken(): string {
   return localStorage.getItem('api_token') || '';
 }
 
+export function clearApiToken() {
+  localStorage.removeItem('api_token');
+}
+
 async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = getApiToken();
   
@@ -22,6 +26,12 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
   });
   
   if (!response.ok) {
+    if (response.status === 401) {
+      // Invalid token - clear it and redirect to login
+      clearApiToken();
+      window.location.href = '/login';
+      throw new Error('Unauthorized: Invalid token');
+    }
     const error = await response.json().catch(() => ({ error: 'Request failed' }));
     throw new Error(error.error || 'Request failed');
   }
