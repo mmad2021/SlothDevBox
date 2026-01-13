@@ -9,6 +9,7 @@ import { Recipes } from './pages/Recipes';
 import { RecipeForm } from './pages/RecipeForm';
 import { StepTemplates } from './pages/StepTemplates';
 import { StepTemplateForm } from './pages/StepTemplateForm';
+import { Documentation } from './pages/Documentation';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = getApiToken();
@@ -25,6 +26,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/docs"
+          element={
+            <ProtectedRoute>
+              <Documentation />
             </ProtectedRoute>
           }
         />
