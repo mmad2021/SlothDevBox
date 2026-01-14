@@ -44,3 +44,18 @@ export async function postArtifact(
     console.error('Failed to post artifact:', error);
   }
 }
+
+export async function postStatusUpdate(taskId: string, status: string) {
+  try {
+    await fetch(`${API_BASE_URL}/api/tasks/${taskId}/status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${TOKEN}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+  } catch (error) {
+    console.error('Failed to post status update:', error);
+  }
+}

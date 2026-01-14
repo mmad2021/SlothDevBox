@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { db } from '../db/database';
 import { createTaskSchema, postLogSchema, postArtifactSchema, TaskStatus } from '@devcenter/shared';
 import type { Task, Project, Recipe, TaskArtifact, TaskLog, TaskDetailResponse } from '@devcenter/shared';
-import { broadcastLog } from '../websocket/server';
+import { broadcastLog, broadcastStatus } from '../websocket/server';
 
 const router = Router();
 
@@ -80,6 +80,15 @@ router.post('/tasks/:id/cancel', (req, res) => {
   
   db.prepare('UPDATE tasks SET cancelRequested = 1 WHERE id = ?').run(id);
   
+  // Broadcast cancellation request (status will be updated by worker when it actually cancels)
+  broadcastLog({
+    type: 'log',
+    taskId: id,
+    ts: new Date().toISOString(),
+    stream: 'system',
+    line: '🚫 Cancellation requested...',
+  });
+  
   res.json({ success: true });
 });
 
@@ -127,6 +136,20 @@ router.post('/tasks/:id/artifacts', (req, res) => {
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
+});
+
+router.post('/tasks/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  
+  if (!status) {
+    return res.status(400).json({ error: 'Status is required' });
+  }
+  
+  // Broadcast status change via WebSocket
+  broadcastStatus(id, status);
+  
+  res.json({ success: true });
 });
 
 export default router;

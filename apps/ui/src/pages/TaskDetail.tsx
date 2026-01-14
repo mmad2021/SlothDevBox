@@ -71,6 +71,9 @@ export function TaskDetail() {
       const message: WSServerMessage = JSON.parse(event.data);
       if (message.type === 'log' && message.taskId === id) {
         setLogs((prev) => [...prev, { ts: message.ts, stream: message.stream, line: message.line }]);
+      } else if (message.type === 'status' && message.taskId === id) {
+        // Update task status immediately
+        setTask((prev) => prev ? { ...prev, status: message.status } : null);
       }
     };
 

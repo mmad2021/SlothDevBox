@@ -122,8 +122,14 @@ export interface WSLogMessage {
   line: string;
 }
 
+export interface WSStatusMessage {
+  type: 'status';
+  taskId: string;
+  status: TaskStatus;
+}
+
 export type WSClientMessage = WSSubscribeMessage;
-export type WSServerMessage = WSLogMessage;
+export type WSServerMessage = WSLogMessage | WSStatusMessage;
 
 // API response types
 export interface TaskDetailResponse extends Task {

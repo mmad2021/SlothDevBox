@@ -65,3 +65,12 @@ export function broadcastLog(message: WSServerMessage) {
     }
   }
 }
+
+export function broadcastStatus(taskId: string, status: string) {
+  const message: WSServerMessage = {
+    type: 'status',
+    taskId,
+    status: status as any,
+  };
+  broadcastLog(message);
+}

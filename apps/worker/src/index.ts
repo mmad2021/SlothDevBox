@@ -1,6 +1,6 @@
 import { getNextPendingTask, isProjectBusy, updateTaskStatus } from './database';
 import { executeRecipe, cleanupProcess } from './executor';
-import { postLog } from './api-client';
+import { postLog, postStatusUpdate } from './api-client';
 import type { RecipeStep } from '@devcenter/shared';
 
 const POLL_INTERVAL = 2000;
@@ -20,6 +20,7 @@ async function processNextTask() {
   console.log(`Processing task: ${task.id}`);
   
   updateTaskStatus(task.id, 'running');
+  await postStatusUpdate(task.id, 'running');
   await postLog(task.id, 'system', '🚀 Task started');
   
   try {
@@ -29,15 +30,18 @@ async function processNextTask() {
     await executeRecipe(task.id, steps, task.project, input);
     
     updateTaskStatus(task.id, 'success');
+    await postStatusUpdate(task.id, 'success');
     await postLog(task.id, 'system', '✅ Task completed successfully');
     console.log(`Task ${task.id} completed successfully`);
   } catch (error: any) {
     if (error.message === 'Cancelled') {
       updateTaskStatus(task.id, 'cancelled');
+      await postStatusUpdate(task.id, 'cancelled');
       await postLog(task.id, 'system', '🚫 Task cancelled');
       console.log(`Task ${task.id} cancelled`);
     } else {
       updateTaskStatus(task.id, 'failed', error.message);
+      await postStatusUpdate(task.id, 'failed');
       await postLog(task.id, 'system', `❌ Task failed: ${error.message}`);
       console.log(`Task ${task.id} failed: ${error.message}`);
     }
