@@ -17,6 +17,8 @@ export function NewTask() {
   const [recipeId, setRecipeId] = useState('');
   const [goal, setGoal] = useState('');
   const [branchSlug, setBranchSlug] = useState('');
+  const [projectPath, setProjectPath] = useState('');
+  const [projectName, setProjectName] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export function NewTask() {
       const task = await api.createTask({
         projectId,
         recipeId,
-        input: { goal, branchSlug },
+        input: { goal, branchSlug, projectPath, projectName },
       });
       navigate(`/tasks/${task.id}`);
     } catch (error: any) {
@@ -98,26 +100,60 @@ export function NewTask() {
               )}
             </div>
 
-            <div>
-              <Label htmlFor="goal">Goal / Prompt (optional)</Label>
-              <Textarea
-                id="goal"
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-                placeholder="Describe what you want to achieve..."
-                rows={4}
-              />
-            </div>
+            {recipeId.startsWith('scaffold-') ? (
+              <>
+                <div>
+                  <Label htmlFor="projectPath">Project Path</Label>
+                  <Input
+                    id="projectPath"
+                    value={projectPath}
+                    onChange={(e) => setProjectPath(e.target.value)}
+                    placeholder="/Users/username/my-new-project"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Full path where the new project will be created
+                  </p>
+                </div>
 
-            <div>
-              <Label htmlFor="branch">Branch Slug (optional)</Label>
-              <Input
-                id="branch"
-                value={branchSlug}
-                onChange={(e) => setBranchSlug(e.target.value)}
-                placeholder="feature-name"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="projectName">Project Name</Label>
+                  <Input
+                    id="projectName"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    placeholder="my-new-project"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Used in package.json and other config files
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <Label htmlFor="goal">Goal / Prompt (optional)</Label>
+                  <Textarea
+                    id="goal"
+                    value={goal}
+                    onChange={(e) => setGoal(e.target.value)}
+                    placeholder="Describe what you want to achieve..."
+                    rows={4}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="branch">Branch Slug (optional)</Label>
+                  <Input
+                    id="branch"
+                    value={branchSlug}
+                    onChange={(e) => setBranchSlug(e.target.value)}
+                    placeholder="feature-name"
+                  />
+                </div>
+              </>
+            )}
 
             <div className="flex gap-2">
               <Button type="submit" disabled={loading} className="flex-1">
