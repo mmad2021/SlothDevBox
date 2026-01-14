@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
-import { existsSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
 import { postLog, postArtifact } from './api-client';
 import { isCancelRequested } from './database';
 import type { RecipeStep, TaskInput, Project } from '@devcenter/shared';
@@ -148,6 +149,10 @@ export async function executeRecipe(
           throw new Error(`Project path does not exist: ${cwd}`);
         }
         await postLog(taskId, 'system', `✓ Project path exists: ${cwd}`);
+      } else if (step.type === 'create_directory') {
+        await executeCreateDirectory(taskId, step, cwd, variables);
+      } else if (step.type === 'write_file') {
+        await executeWriteFile(taskId, step, cwd, variables);
       } else if (step.type === 'start_preview') {
         const result = await executeCommand(taskId, step, cwd, variables);
         commandTranscript.push(`${step.command} ${step.args?.join(' ')}`);

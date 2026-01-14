@@ -11,6 +11,19 @@ export const seedStepTemplates = [
     }),
   },
   {
+    id: 'create_directory',
+    name: 'Create Directory',
+    description: 'Create a new directory for the project',
+    type: 'create_directory',
+    configSchema: JSON.stringify({
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'Directory path to create (can use {{projectPath}} variable)' }
+      },
+      required: ['path']
+    }),
+  },
+  {
     id: 'command',
     name: 'Run Command',
     description: 'Execute a shell command',
@@ -19,7 +32,8 @@ export const seedStepTemplates = [
       type: 'object',
       properties: {
         command: { type: 'string', description: 'Command to execute (e.g., bun, npm, git)' },
-        args: { type: 'array', items: { type: 'string' }, description: 'Command arguments' }
+        args: { type: 'array', items: { type: 'string' }, description: 'Command arguments' },
+        cwd: { type: 'string', description: 'Working directory (optional, uses projectPath by default)' }
       },
       required: ['command']
     }),
@@ -48,7 +62,7 @@ export const seedStepTemplates = [
     configSchema: JSON.stringify({
       type: 'object',
       properties: {
-        subcommand: { type: 'string', description: 'Git subcommand (e.g., diff, branch, checkout)' },
+        subcommand: { type: 'string', description: 'Git subcommand (e.g., diff, branch, checkout, init)' },
         args: { type: 'array', items: { type: 'string' }, description: 'Subcommand arguments' }
       },
       required: ['subcommand']
@@ -65,6 +79,20 @@ export const seedStepTemplates = [
         mode: { type: 'string', enum: ['explain', 'fix', 'implement', 'review'], description: 'Copilot mode' }
       },
       required: ['mode']
+    }),
+  },
+  {
+    id: 'write_file',
+    name: 'Write File',
+    description: 'Create or overwrite a file with content',
+    type: 'write_file',
+    configSchema: JSON.stringify({
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'File path (relative to project directory)' },
+        content: { type: 'string', description: 'File content (supports variables: {{projectName}}, {{goal}})' }
+      },
+      required: ['path', 'content']
     }),
   },
 ];
