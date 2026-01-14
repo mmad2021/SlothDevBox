@@ -286,6 +286,43 @@ Step templates provide a type-safe, reusable way to define step configurations.
 | `start_preview` | Launch dev server with preview URL | Remote development |
 | `git` | Git operations (diff, branch, etc.) | Version control |
 | `copilot` | GitHub Copilot CLI integration | AI assistance |
+| `create_directory` | Create a new directory | **Project scaffolding** |
+| `write_file` | Write content to a file | **Project scaffolding** |
+
+### Project Scaffolding
+
+SlothDevBox supports creating new projects from scratch using scaffolding recipes. Three scaffolding recipes are included:
+
+- **Vite + React + TypeScript** - Modern frontend development
+- **Bun Application** - Lightweight TypeScript app
+- **Next.js + TypeScript** - Full-stack React framework
+
+Scaffolding recipes use special step types:
+- `create_directory` - Creates project directories
+- `write_file` - Generates files with template variable interpolation
+
+**Example scaffolding recipe:**
+
+```json
+{
+  "steps": [
+    {
+      "type": "create_directory",
+      "path": "{{projectPath}}"
+    },
+    {
+      "type": "write_file",
+      "path": "{{projectPath}}/package.json",
+      "content": "{\n  \"name\": \"{{projectName}}\"\n}"
+    },
+    {
+      "type": "git",
+      "command": "git",
+      "args": ["init"]
+    }
+  ]
+}
+```
 
 ### Creating Custom Step Types
 
@@ -293,6 +330,23 @@ Step templates provide a type-safe, reusable way to define step configurations.
 2. Create JSON Schema for required configuration
 3. Update the worker executor to handle the new type
 4. Use in recipes!
+
+### Template Variables
+
+Recipes support variable interpolation using `{{variableName}}` syntax:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `projectPath` | Full path to project directory | `/home/user/my-app` |
+| `projectName` | Name of the project | `my-app` |
+| `goal` | User input for Copilot tasks | `Fix login bug` |
+| `branchSlug` | URL-safe branch name | `fix-login-bug` |
+| `defaultDevPort` | Project's dev server port | `3000` |
+
+Variables are interpolated in:
+- File paths: `{{projectPath}}/src/index.ts`
+- File content: `console.log("{{projectName}}")`
+- Command arguments: `git commit -m "{{goal}}"`
 
 ## 🤖 GitHub Copilot Integration
 
