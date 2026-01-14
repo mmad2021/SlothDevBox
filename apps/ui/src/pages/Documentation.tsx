@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, BookOpen, ExternalLink } from 'lucide-react';
+import { ArrowLeft, BookOpen } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -10,27 +10,38 @@ import rehypeSanitize from 'rehype-sanitize';
 
 export function Documentation() {
   const [markdown, setMarkdown] = useState('');
+  const [guideMarkdown, setGuideMarkdown] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activeDoc, setActiveDoc] = useState<'readme' | 'guide'>('guide');
 
   useEffect(() => {
-    // Fetch README from multiple sources with fallback
+    // Fetch documentation from multiple sources
     const fetchDocs = async () => {
       try {
-        // Try to fetch from local public folder first
-        let response = await fetch('/README.md');
-        
-        // If not found locally, try GitHub
-        if (!response.ok) {
-          // Update this URL to your actual GitHub repository
-          response = await fetch('https://raw.githubusercontent.com/yourusername/SlothDevBox/master/README.md');
+        // Fetch System Guide
+        let guideResponse = await fetch('/SYSTEM_GUIDE.md');
+        if (!guideResponse.ok) {
+          guideResponse = await fetch('https://raw.githubusercontent.com/mmad2021/SlothDevBox/master/SYSTEM_GUIDE.md');
+        }
+        if (guideResponse.ok) {
+          const guideText = await guideResponse.text();
+          setGuideMarkdown(guideText);
+        }
+
+        // Fetch README
+        let readmeResponse = await fetch('/README.md');
+        if (!readmeResponse.ok) {
+          readmeResponse = await fetch('https://raw.githubusercontent.com/mmad2021/SlothDevBox/master/README.md');
         }
         
-        if (!response.ok) {
+        if (!readmeResponse.ok && !guideResponse.ok) {
           throw new Error('Documentation not found');
         }
         
-        const text = await response.text();
-        setMarkdown(text);
+        if (readmeResponse.ok) {
+          const readmeText = await readmeResponse.text();
+          setMarkdown(readmeText);
+        }
       } catch (error) {
         console.error('Failed to load documentation:', error);
         // Provide embedded documentation as fallback
@@ -124,16 +135,23 @@ For complete documentation, visit the [GitHub repository](https://github.com/mma
               <p className="text-muted-foreground">Complete guide to SlothDevBox</p>
             </div>
           </div>
-          <a 
-            href="https://github.com/mmad2021/SlothDevBox" 
-            target="_blank" 
-            rel="noopener noreferrer"
+        </div>
+
+        <div className="flex gap-2 mb-6">
+          <Button
+            variant={activeDoc === 'guide' ? 'default' : 'outline'}
+            onClick={() => setActiveDoc('guide')}
           >
-            <Button variant="outline">
-              <ExternalLink className="h-4 w-4 mr-2" />
-              View on GitHub
-            </Button>
-          </a>
+            <BookOpen className="h-4 w-4 mr-2" />
+            System Guide
+          </Button>
+          <Button
+            variant={activeDoc === 'readme' ? 'default' : 'outline'}
+            onClick={() => setActiveDoc('readme')}
+          >
+            <BookOpen className="h-4 w-4 mr-2" />
+            README
+          </Button>
         </div>
 
         {loading ? (
@@ -143,8 +161,16 @@ For complete documentation, visit the [GitHub repository](https://github.com/mma
             <CardHeader>
               <div className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
-                <CardTitle>README.md</CardTitle>
+                <CardTitle>
+                  {activeDoc === 'guide' ? 'Complete System Guide' : 'README.md'}
+                </CardTitle>
               </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                {activeDoc === 'guide' 
+                  ? 'Detailed explanation of how projects, recipes, steps, and tasks work together'
+                  : 'Quick start and overview documentation'
+                }
+              </p>
             </CardHeader>
             <CardContent>
               <article className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-pre:bg-muted prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none">
@@ -213,7 +239,7 @@ For complete documentation, visit the [GitHub repository](https://github.com/mma
                     ),
                   }}
                 >
-                  {markdown}
+                  {activeDoc === 'guide' ? guideMarkdown : markdown}
                 </ReactMarkdown>
               </article>
             </CardContent>
