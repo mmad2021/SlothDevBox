@@ -85,4 +85,8 @@ export const api = {
   cancelTask: (id: string) => fetchApi(`/tasks/${id}/cancel`, {
     method: 'POST',
   }),
+  
+  // Filesystem browsing
+  getFilesystemRoots: () => fetchApi('/filesystem/roots'),
+  browseFilesystem: (path?: string) => fetchApi(`/filesystem/browse${path ? `?path=${encodeURIComponent(path)}` : ''}`),
 };

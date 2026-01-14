@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Folder } from 'lucide-react';
+import { FolderBrowser } from '@/components/FolderBrowser';
 import type { Project } from '@devcenter/shared';
 
 export function Projects() {
@@ -13,6 +14,7 @@ export function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showFolderBrowser, setShowFolderBrowser] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     path: '',
@@ -34,6 +36,10 @@ export function Projects() {
   useEffect(() => {
     loadProjects();
   }, []);
+
+  const handleFolderSelect = (path: string) => {
+    setFormData({ ...formData, path });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,13 +97,24 @@ export function Projects() {
 
               <div>
                 <Label htmlFor="path">Project Path</Label>
-                <Input
-                  id="path"
-                  value={formData.path}
-                  onChange={(e) => setFormData({ ...formData, path: e.target.value })}
-                  placeholder="/Users/username/projects/my-app"
-                  required
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="path"
+                    value={formData.path}
+                    onChange={(e) => setFormData({ ...formData, path: e.target.value })}
+                    placeholder="/Users/username/projects/my-app"
+                    required
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowFolderBrowser(true)}
+                    title="Browse folders"
+                  >
+                    <Folder className="h-4 w-4" />
+                  </Button>
+                </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   Absolute path to the project directory
                 </p>
@@ -182,6 +199,13 @@ export function Projects() {
           ))}
         </div>
       )}
+
+      <FolderBrowser
+        isOpen={showFolderBrowser}
+        onClose={() => setShowFolderBrowser(false)}
+        onSelect={handleFolderSelect}
+        initialPath={formData.path || undefined}
+      />
     </div>
   );
 }

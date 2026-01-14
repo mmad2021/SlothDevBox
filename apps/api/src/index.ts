@@ -8,6 +8,7 @@ import projectsRoutes from './routes/projects';
 import recipesRoutes from './routes/recipes';
 import stepTemplatesRoutes from './routes/step-templates';
 import tasksRoutes from './routes/tasks';
+import filesystemRoutes from './routes/filesystem';
 import { setupWebSocket } from './websocket/server';
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api', projectsRoutes);
 app.use('/api', recipesRoutes);
 app.use('/api', stepTemplatesRoutes);
 app.use('/api', tasksRoutes);
+app.use('/api', filesystemRoutes);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
