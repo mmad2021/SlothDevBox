@@ -132,7 +132,6 @@ export const seedRecipes: Array<{
       },
     ],
   },
-];
   {
     id: 'scaffold-vite-react',
     name: 'Scaffold: Vite + React + TypeScript',
@@ -146,22 +145,20 @@ export const seedRecipes: Array<{
         type: 'command',
         command: 'bun',
         args: ['create', 'vite', '.', '--template', 'react-ts'],
-        cwd: '{{projectPath}}',
       },
       {
         type: 'command',
         command: 'bun',
         args: ['install'],
-        cwd: '{{projectPath}}',
       },
       {
         type: 'git',
-        subcommand: 'init',
-        args: [],
+        command: 'git',
+        args: ['init'],
       },
       {
         type: 'write_file',
-        path: '.gitignore',
+        path: '{{projectPath}}/.gitignore',
         content: `node_modules
 dist
 .env.local
@@ -171,13 +168,13 @@ dist
       },
       {
         type: 'git',
-        subcommand: 'add',
-        args: ['.'],
+        command: 'git',
+        args: ['add', '.'],
       },
       {
         type: 'git',
-        subcommand: 'commit',
-        args: ['-m', 'Initial commit: Vite + React + TypeScript'],
+        command: 'git',
+        args: ['commit', '-m', 'Initial commit: Vite + React + TypeScript'],
       },
     ],
   },
@@ -194,11 +191,10 @@ dist
         type: 'command',
         command: 'bun',
         args: ['init', '-y'],
-        cwd: '{{projectPath}}',
       },
       {
         type: 'write_file',
-        path: 'src/index.ts',
+        path: '{{projectPath}}/src/index.ts',
         content: `console.log("Hello from {{projectName}}!");
 
 export function greet(name: string) {
@@ -207,12 +203,12 @@ export function greet(name: string) {
       },
       {
         type: 'git',
-        subcommand: 'init',
-        args: [],
+        command: 'git',
+        args: ['init'],
       },
       {
         type: 'write_file',
-        path: '.gitignore',
+        path: '{{projectPath}}/.gitignore',
         content: `node_modules
 *.log
 .env
@@ -221,13 +217,13 @@ build`,
       },
       {
         type: 'git',
-        subcommand: 'add',
-        args: ['.'],
+        command: 'git',
+        args: ['add', '.'],
       },
       {
         type: 'git',
-        subcommand: 'commit',
-        args: ['-m', 'Initial commit: Bun application'],
+        command: 'git',
+        args: ['commit', '-m', 'Initial commit: Bun application'],
       },
     ],
   },
@@ -244,22 +240,21 @@ build`,
         type: 'command',
         command: 'bunx',
         args: ['create-next-app@latest', '.', '--typescript', '--tailwind', '--app', '--no-src-dir', '--import-alias', '@/*'],
-        cwd: '{{projectPath}}',
       },
       {
         type: 'git',
-        subcommand: 'init',
-        args: [],
+        command: 'git',
+        args: ['init'],
       },
       {
         type: 'git',
-        subcommand: 'add',
-        args: ['.'],
+        command: 'git',
+        args: ['add', '.'],
       },
       {
         type: 'git',
-        subcommand: 'commit',
-        args: ['-m', 'Initial commit: Next.js + TypeScript'],
+        command: 'git',
+        args: ['commit', '-m', 'Initial commit: Next.js + TypeScript'],
       },
     ],
   },
