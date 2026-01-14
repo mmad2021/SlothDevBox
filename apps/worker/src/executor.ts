@@ -19,6 +19,57 @@ function isCommandAllowed(command: string): boolean {
   return allowed.includes(command);
 }
 
+async function executeCreateDirectory(
+  taskId: string,
+  step: RecipeStep,
+  basePath: string,
+  variables: Record<string, any>
+): Promise<void> {
+  const relativePath = interpolate(step.path || '', variables);
+  const fullPath = join(basePath, relativePath);
+  
+  await postLog(taskId, 'system', `Creating directory: ${relativePath}`);
+  
+  if (existsSync(fullPath)) {
+    await postLog(taskId, 'system', `⚠ Directory already exists, skipping: ${relativePath}`);
+    return;
+  }
+  
+  try {
+    mkdirSync(fullPath, { recursive: true });
+    await postLog(taskId, 'system', `✓ Created directory: ${relativePath}`);
+  } catch (error: any) {
+    throw new Error(`Failed to create directory ${relativePath}: ${error.message}`);
+  }
+}
+
+async function executeWriteFile(
+  taskId: string,
+  step: RecipeStep,
+  basePath: string,
+  variables: Record<string, any>
+): Promise<void> {
+  const relativePath = interpolate(step.path || '', variables);
+  const fullPath = join(basePath, relativePath);
+  const content = interpolate(step.content || '', variables);
+  
+  await postLog(taskId, 'system', `Writing file: ${relativePath}`);
+  
+  // Create parent directories if they don't exist
+  const dir = dirname(fullPath);
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
+    await postLog(taskId, 'system', `Created parent directory: ${dirname(relativePath)}`);
+  }
+  
+  try {
+    writeFileSync(fullPath, content, 'utf-8');
+    await postLog(taskId, 'system', `✓ Wrote file: ${relativePath} (${content.length} bytes)`);
+  } catch (error: any) {
+    throw new Error(`Failed to write file ${relativePath}: ${error.message}`);
+  }
+}
+
 async function executeCommand(
   taskId: string,
   step: RecipeStep,
@@ -122,12 +173,18 @@ export async function executeRecipe(
   const variables = {
     ...input,
     defaultDevPort: project.defaultDevPort,
-    projectName: project.name,
-    projectPath: project.path,
   };
   
-  // Always use the project's path as the working directory
-  const cwd = project.path;
+  // For scaffolding recipes, use projectPath from input; otherwise use project.path
+  // Also set projectName from input if available, otherwise from project
+  if (!variables.projectPath) {
+    variables.projectPath = project.path;
+  }
+  if (!variables.projectName) {
+    variables.projectName = project.name;
+  }
+  
+  const cwd = variables.projectPath as string;
   const commandTranscript: string[] = [];
   
   for (let i = 0; i < steps.length; i++) {
