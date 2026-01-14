@@ -121,35 +121,31 @@ For complete documentation, visit the [GitHub repository](https://github.com/mma
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 max-w-5xl">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="outline" size="icon">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold">Documentation</h1>
-              <p className="text-muted-foreground">Complete guide to SlothDevBox</p>
-            </div>
-          </div>
+    <div className="min-h-screen">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex items-center gap-2 px-4 py-2">
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="h-8 px-2">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-lg font-semibold">Documentation</h1>
         </div>
-
-        <div className="flex gap-2 mb-6">
+      </header>
+      <main className="px-6 py-4">
+        <div className="flex gap-2 mb-4">
           <Button
+            size="sm"
             variant={activeDoc === 'guide' ? 'default' : 'outline'}
             onClick={() => setActiveDoc('guide')}
           >
-            <BookOpen className="h-4 w-4 mr-2" />
             System Guide
           </Button>
           <Button
+            size="sm"
             variant={activeDoc === 'readme' ? 'default' : 'outline'}
             onClick={() => setActiveDoc('readme')}
           >
-            <BookOpen className="h-4 w-4 mr-2" />
             README
           </Button>
         </div>
@@ -245,7 +241,7 @@ For complete documentation, visit the [GitHub repository](https://github.com/mma
             </CardContent>
           </Card>
         )}
-      </div>
+      </main>
     </div>
   );
 }

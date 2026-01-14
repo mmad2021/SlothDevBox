@@ -61,23 +61,22 @@ export function RecipeForm() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 max-w-4xl">
-        <div className="flex items-center gap-4 mb-6">
+    <div className="min-h-screen">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex items-center gap-2 px-4 py-2">
           <Link to="/recipes">
-            <Button variant="outline" size="icon">
+            <Button variant="ghost" size="sm" className="h-8 px-2">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold">Create Recipe</h1>
-            <p className="text-muted-foreground">Define a new task automation recipe</p>
-          </div>
+          <h1 className="text-lg font-semibold">New Recipe</h1>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
+      </header>
+      <main className="px-6 py-4">
+        <form onSubmit={handleSubmit} className="space-y-4 max-w-4xl mx-auto">
           <Card>
-            <CardHeader>
+            <CardHeader className="py-3">
+              <CardTitle className="text-base">Recipe Configuration</CardTitle>
               <CardTitle>Basic Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -249,7 +248,7 @@ export function RecipeForm() {
             </Link>
           </div>
         </form>
-      </div>
+      </main>
     </div>
   );
 }

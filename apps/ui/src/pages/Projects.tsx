@@ -58,26 +58,26 @@ export function Projects() {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" onClick={() => navigate('/')}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold">Projects</h1>
-          <p className="text-muted-foreground">Manage your development projects</p>
+    <div className="min-h-screen">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => navigate('/')}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h1 className="text-lg font-semibold">Projects</h1>
+          </div>
+          <Button size="sm" className="h-8 px-2" onClick={() => setShowForm(!showForm)}>
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
-        <Button onClick={() => setShowForm(!showForm)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Project
-        </Button>
-      </div>
+      </header>
+      <main className="px-6 py-4">
 
-      {showForm && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Add New Project</CardTitle>
+        {showForm && (
+          <Card className="mb-4">
+            <CardHeader className="py-3">
+              <CardTitle className="text-base">Add New Project</CardTitle>
             <CardDescription>
               Add a project to run tasks against. Use absolute paths.
             </CardDescription>
@@ -206,6 +206,7 @@ export function Projects() {
         onSelect={handleFolderSelect}
         initialPath={formData.path || undefined}
       />
+      </main>
     </div>
   );
 }

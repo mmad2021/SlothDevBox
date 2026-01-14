@@ -4,7 +4,15 @@ import { api, clearApiToken } from '@/lib/api';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, RefreshCw, FolderOpen, Moon, Sun, LogOut, BookOpen, Book } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Plus, RefreshCw, FolderOpen, Moon, Sun, LogOut, BookOpen, Book, User } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import type { Task } from '@devcenter/shared';
 
@@ -49,84 +57,101 @@ export function Dashboard() {
   }, []);
 
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">SlothDevBox</h1>
-          <p className="text-muted-foreground">Manage your development tasks</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="icon" onClick={toggleTheme} title="Toggle theme">
-            {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-          </Button>
-          <Button variant="outline" size="icon" onClick={handleLogout} title="Logout">
-            <LogOut className="h-4 w-4" />
-          </Button>
-          <Link to="/docs">
-            <Button variant="outline">
-              <Book className="h-4 w-4 mr-2" />
-              Docs
-            </Button>
-          </Link>
-          <Link to="/recipes">
-            <Button variant="outline">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Recipes
-            </Button>
-          </Link>
-          <Link to="/projects">
-            <Button variant="outline">
-              <FolderOpen className="h-4 w-4 mr-2" />
-              Projects
-            </Button>
-          </Link>
-          <Button variant="outline" size="icon" onClick={loadTasks}>
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-          <Link to="/new">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              New Task
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="text-center py-12">Loading...</div>
-      ) : tasks.length === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>No tasks yet</CardTitle>
-            <CardDescription>Create your first task to get started</CardDescription>
-          </CardHeader>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {tasks.map((task) => (
-            <Link key={task.id} to={`/tasks/${task.id}`}>
-              <Card className="hover:bg-accent transition-colors cursor-pointer">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge className={statusColors[task.status as keyof typeof statusColors]}>
-                          {task.status}
-                        </Badge>
-                        <span className="text-sm text-muted-foreground">{task.id}</span>
-                      </div>
-                      <CardTitle className="text-lg">Task #{task.id.slice(-8)}</CardTitle>
-                      <CardDescription>
-                        Created {new Date(task.createdAt).toLocaleString()}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
+    <div className="min-h-screen">
+      {/* Compact header */}
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex items-center justify-between px-4 py-2">
+          <h1 className="text-lg font-semibold">SlothDevBox</h1>
+          
+          <nav className="flex items-center gap-1">
+            <Link to="/new">
+              <Button variant="ghost" size="sm" className="h-8 px-2" title="New Task">
+                <Plus className="h-4 w-4" />
+              </Button>
             </Link>
-          ))}
+            <Link to="/projects">
+              <Button variant="ghost" size="sm" className="h-8 px-2" title="Projects">
+                <FolderOpen className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/recipes">
+              <Button variant="ghost" size="sm" className="h-8 px-2" title="Recipes">
+                <BookOpen className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/docs">
+              <Button variant="ghost" size="sm" className="h-8 px-2" title="Documentation">
+                <Book className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Button variant="ghost" size="sm" className="h-8 px-2" onClick={loadTasks} title="Refresh">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+            
+            {/* Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full">
+                  <User className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Settings</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={toggleTheme}>
+                  {theme === 'light' ? <Moon className="h-4 w-4 mr-2" /> : <Sun className="h-4 w-4 mr-2" />}
+                  {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Log Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </nav>
         </div>
-      )}
+      </header>
+
+      {/* Main content - full width */}
+      <main className="px-6 py-4">
+
+        {loading ? (
+          <div className="text-center py-12">Loading...</div>
+        ) : tasks.length === 0 ? (
+          <Card className="max-w-2xl">
+            <CardHeader>
+              <CardTitle>No tasks yet</CardTitle>
+              <CardDescription>Create your first task to get started</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {tasks.map((task) => (
+              <Link key={task.id} to={`/tasks/${task.id}`}>
+                <Card className="hover:bg-accent transition-colors cursor-pointer">
+                  <CardHeader className="py-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge className={statusColors[task.status as keyof typeof statusColors]}>
+                            {task.status}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">{task.id}</span>
+                        </div>
+                        <CardTitle className="text-base">Task #{task.id.slice(-8)}</CardTitle>
+                        <CardDescription className="text-xs">
+                          Created {new Date(task.createdAt).toLocaleString()}
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }

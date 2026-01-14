@@ -116,7 +116,7 @@ export function TaskDetail() {
 
   if (!task) {
     return (
-      <div className="container mx-auto p-4 max-w-6xl">
+      <div className="min-h-screen">
         <div className="text-center py-12">Loading...</div>
       </div>
     );
@@ -128,36 +128,44 @@ export function TaskDetail() {
   const transcript = task.artifacts.find(a => a.type === 'command_transcript')?.value;
 
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
-      <Button variant="ghost" onClick={() => navigate('/')} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back
-      </Button>
-
-      <div className="space-y-4">
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge className={statusColors[task.status as keyof typeof statusColors]}>
-                    {task.status}
-                  </Badge>
+    <div className="min-h-screen">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="h-8 px-2" onClick={() => navigate('/')}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h1 className="text-lg font-semibold">Task #{task.id.slice(-8)}</h1>
+          </div>
+          {task.status === 'running' && (
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              className="h-8 px-2"
+              onClick={handleCancel}
+              disabled={cancelling}
+            >
+              <XCircle className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </header>
+      <main className="px-6 py-4">
+        <div className="space-y-4">
+          <Card>
+            <CardHeader className="py-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge className={statusColors[task.status as keyof typeof statusColors]}>
+                      {task.status}
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-base">{task.project.name} • {task.recipe.name}</CardTitle>
                 </div>
-                <CardTitle>Task #{task.id.slice(-8)}</CardTitle>
-                <CardDescription>
-                  {task.project.name} • {task.recipe.name}
-                </CardDescription>
               </div>
-              {(task.status === 'running' || task.status === 'pending') && (
-                <Button variant="destructive" onClick={handleCancel} disabled={cancelling}>
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
+            </CardHeader>
+            <CardContent>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">Created:</span>{' '}
@@ -245,6 +253,7 @@ export function TaskDetail() {
           </CardContent>
         </Card>
       </div>
+      </main>
     </div>
   );
 }

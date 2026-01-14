@@ -50,28 +50,25 @@ export function StepTemplates() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 max-w-6xl">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-2">
             <Link to="/recipes">
-              <Button variant="outline" size="icon">
+              <Button variant="ghost" size="sm" className="h-8 px-2">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold">Step Templates</h1>
-              <p className="text-muted-foreground">Manage reusable step configurations</p>
-            </div>
+            <h1 className="text-lg font-semibold">Step Templates</h1>
           </div>
           <Link to="/step-templates/new">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              New Template
+            <Button size="sm" className="h-8 px-2">
+              <Plus className="h-4 w-4" />
             </Button>
           </Link>
         </div>
-
+      </header>
+      <main className="px-6 py-4">
         {loading ? (
           <div className="text-center py-12">Loading...</div>
         ) : (
@@ -172,7 +169,7 @@ export function StepTemplates() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
