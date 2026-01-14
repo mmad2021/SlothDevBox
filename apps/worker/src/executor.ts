@@ -122,10 +122,12 @@ export async function executeRecipe(
   const variables = {
     ...input,
     defaultDevPort: project.defaultDevPort,
+    projectName: project.name,
+    projectPath: project.path,
   };
   
-  // For scaffolding recipes, use projectPath from input; otherwise use project.path
-  let cwd = variables.projectPath ? interpolate(variables.projectPath as string, variables) : project.path;
+  // Always use the project's path as the working directory
+  const cwd = project.path;
   const commandTranscript: string[] = [];
   
   for (let i = 0; i < steps.length; i++) {

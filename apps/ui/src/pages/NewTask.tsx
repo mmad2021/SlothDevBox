@@ -17,8 +17,6 @@ export function NewTask() {
   const [recipeId, setRecipeId] = useState('');
   const [goal, setGoal] = useState('');
   const [branchSlug, setBranchSlug] = useState('');
-  const [projectPath, setProjectPath] = useState('');
-  const [projectName, setProjectName] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -38,7 +36,7 @@ export function NewTask() {
       const task = await api.createTask({
         projectId,
         recipeId,
-        input: { goal, branchSlug, projectPath, projectName },
+        input: { goal, branchSlug },
       });
       navigate(`/tasks/${task.id}`);
     } catch (error: any) {
@@ -100,37 +98,21 @@ export function NewTask() {
               )}
             </div>
 
-            {recipeId.startsWith('scaffold-') ? (
-              <>
-                <div>
-                  <Label htmlFor="projectPath">Project Path</Label>
-                  <Input
-                    id="projectPath"
-                    value={projectPath}
-                    onChange={(e) => setProjectPath(e.target.value)}
-                    placeholder="/Users/username/my-new-project"
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Full path where the new project will be created
-                  </p>
-                </div>
+            {/* Show selected project info for scaffold recipes */}
+            {recipeId.startsWith('scaffold-') && projects.find((p) => p.id === projectId) && (
+              <div className="bg-muted p-3 rounded-md">
+                <p className="text-sm font-medium">Project will be scaffolded at:</p>
+                <p className="text-sm font-mono text-muted-foreground">
+                  {projects.find((p) => p.id === projectId)!.path}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  ⚠️ This directory should be empty or the scaffold may fail.
+                </p>
+              </div>
+            )}
 
-                <div>
-                  <Label htmlFor="projectName">Project Name</Label>
-                  <Input
-                    id="projectName"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    placeholder="my-new-project"
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Used in package.json and other config files
-                  </p>
-                </div>
-              </>
-            ) : (
+            {/* Show goal/branch fields for non-scaffold recipes */}
+            {!recipeId.startsWith('scaffold-') && (
               <>
                 <div>
                   <Label htmlFor="goal">Goal / Prompt (optional)</Label>

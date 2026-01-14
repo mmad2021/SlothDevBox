@@ -135,12 +135,8 @@ export const seedRecipes: Array<{
   {
     id: 'scaffold-vite-react',
     name: 'Scaffold: Vite + React + TypeScript',
-    description: 'Create a new Vite React TypeScript project from scratch',
+    description: 'Initialize the project directory with Vite + React + TypeScript',
     steps: [
-      {
-        type: 'create_directory',
-        path: '{{projectPath}}',
-      },
       {
         type: 'command',
         command: 'bun',
@@ -157,16 +153,6 @@ export const seedRecipes: Array<{
         args: ['init'],
       },
       {
-        type: 'write_file',
-        path: '{{projectPath}}/.gitignore',
-        content: `node_modules
-dist
-.env.local
-.env.*.local
-*.log
-.DS_Store`,
-      },
-      {
         type: 'git',
         command: 'git',
         args: ['add', '.'],
@@ -176,44 +162,29 @@ dist
         command: 'git',
         args: ['commit', '-m', 'Initial commit: Vite + React + TypeScript'],
       },
+      {
+        type: 'start_preview',
+        command: 'bun',
+        args: ['run', 'dev', '--', '--host', '0.0.0.0', '--port', '{{defaultDevPort}}'],
+        detectReady: 'Local:',
+        keepAlive: true,
+      },
     ],
   },
   {
     id: 'scaffold-bun-app',
     name: 'Scaffold: Bun Application',
-    description: 'Create a new Bun application with TypeScript',
+    description: 'Initialize the project directory with a Bun TypeScript application',
     steps: [
-      {
-        type: 'create_directory',
-        path: '{{projectPath}}',
-      },
       {
         type: 'command',
         command: 'bun',
         args: ['init', '-y'],
       },
       {
-        type: 'write_file',
-        path: '{{projectPath}}/src/index.ts',
-        content: `console.log("Hello from {{projectName}}!");
-
-export function greet(name: string) {
-  return \`Hello, \${name}!\`;
-}`,
-      },
-      {
         type: 'git',
         command: 'git',
         args: ['init'],
-      },
-      {
-        type: 'write_file',
-        path: '{{projectPath}}/.gitignore',
-        content: `node_modules
-*.log
-.env
-dist
-build`,
       },
       {
         type: 'git',
@@ -230,16 +201,12 @@ build`,
   {
     id: 'scaffold-next-app',
     name: 'Scaffold: Next.js + TypeScript',
-    description: 'Create a new Next.js application with TypeScript',
+    description: 'Initialize the project directory with Next.js + TypeScript + Tailwind',
     steps: [
-      {
-        type: 'create_directory',
-        path: '{{projectPath}}',
-      },
       {
         type: 'command',
         command: 'bunx',
-        args: ['create-next-app@latest', '.', '--typescript', '--tailwind', '--app', '--no-src-dir', '--import-alias', '@/*'],
+        args: ['create-next-app@latest', '.', '--typescript', '--tailwind', '--app', '--no-src-dir', '--import-alias', '@/*', '--no-git'],
       },
       {
         type: 'git',
@@ -254,7 +221,14 @@ build`,
       {
         type: 'git',
         command: 'git',
-        args: ['commit', '-m', 'Initial commit: Next.js + TypeScript'],
+        args: ['commit', '-m', 'Initial commit: Next.js + TypeScript + Tailwind'],
+      },
+      {
+        type: 'start_preview',
+        command: 'bun',
+        args: ['run', 'dev', '--', '-p', '{{defaultDevPort}}'],
+        detectReady: 'Ready',
+        keepAlive: true,
       },
     ],
   },
